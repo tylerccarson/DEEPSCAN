@@ -31,25 +31,35 @@ app.use(express.static(__dirname + '/public'));
 
 
 if (env === 'development') {
-	mongoose.connect('mongodb://localhost/deepscan');
+	mongoose.connect('mongodb://127.0.0.1/deepscan', {
+		useMongoClient: true
+	});
 } else {
+	// need to specify a plugin for production database, hosted via AWS most likely
 	mongoose.connect('mongodb://admin:password@ds153719.mlab.com:53719/deepscan');
 }
 
+//clarify connection
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error...'));
 db.once('open', function callback() {
 	console.log('deepscan db opened');
 	console.log('Environment: ' + env);
 });
+
+//create schema
 var messageSchema = mongoose.Schema({
 	message: String
 });
+
+//create model for document creation/deletion
 var Message = mongoose.model('Message', messageSchema);
-var mongoMessage;
-Message.find().exec(function (err, messageDoc) {
-	mongoMessage = messageDoc[0].message;
-});
+
+//what's happening here? Comment out for now
+// var mongoMessage;
+// Message.find().exec(function (err, messageDoc) {
+// 	mongoMessage = messageDoc[0].message;
+// });
 
 app.get('/partials/:partialPath', function (req, res) {
 	res.render('partials/' + req.params.partialPath);
