@@ -20,6 +20,9 @@ app.listen(port, () => {
 });
 
 
+// this function would best be factored out into a microservice, running on its own separate server that could then be scaled
+// so-- turn that image processor into its own API; thus, other applications could use it as well.
+
 //routes
 app.post('/api/upload', function (req, res) {
 
@@ -30,31 +33,41 @@ app.post('/api/upload', function (req, res) {
 	form.multiples = true;
 
 	// store all uploads in the /uploads directory
-	form.uploadDir = path.join(__dirname, '/python');
+	form.uploadDir = path.join(__dirname, '/python/uploads');
 
 	// every time a file has been uploaded successfully,
 	// rename it to it's orignal name
-	form.on('file', function (field, file) {
-		fs.rename(file.path, path.join(form.uploadDir, 'input.png'));
+	form.on('file', function (name, file) {
+		
+		fs.rename(file.path, path.join(form.uploadDir, 'input.png'), (err) => {
+			if (err) {
+				console.log(err);
+			}
+	    
+	    var options = {
+	    	args: [file]
+	    }
+
+	    PythonShell.run(path.join(__dirname + '/python/deep_scan.py'), options, (err, data) => {
+	    	console.log('response from python script: ', data);
+	    	if (err) {
+	    		res.send(err);
+	      }
+	      res.send(data);
+	    })
+		});
+
 	});
 
 	// log any errors that occur
 	form.on('error', function (err) {
 		console.log('An error has occured: \n' + err);
-	});
-
-	// once all the files have been uploaded, send a response to the client
-	form.on('end', function () {
-		var pyshell = new PythonShell('/python/deep_scan.py');
-		pyshell.on('message', function (message) {
-			//OUTPUT deep_scan.py
-			console.log(message);
-			res.send(message);
-		    });
+		res.send(err);
 	});
 
 	// parse the incoming request containing the form data
 	form.parse(req);
+
 });
 
 app.get('/api/scantest', function (req, res) {
