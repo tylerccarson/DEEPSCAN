@@ -55,11 +55,11 @@ var messageSchema = mongoose.Schema({
 //create model for document creation/deletion
 var Message = mongoose.model('Message', messageSchema);
 
-//what's happening here? Comment out for now
-// var mongoMessage;
-// Message.find().exec(function (err, messageDoc) {
-// 	mongoMessage = messageDoc[0].message;
-// });
+//why?
+var mongoMessage;
+Message.find().exec(function (err, messageDoc) {
+	mongoMessage = messageDoc.message;
+});
 
 app.get('/partials/:partialPath', function (req, res) {
 	res.render('partials/' + req.params.partialPath);
@@ -122,6 +122,8 @@ app.get('/api/scantest', function (req, res) {
 	pyshell.on('message', function (message) {
 		//OUTPUT deep_scan.py
 		console.log(message);
+
+		//no response??
 	});
 });
 
