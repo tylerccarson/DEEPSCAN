@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Form, FormControl, FormGroup, ControlLabel } from 'react-bootstrap';
+import Upload from './components/Upload.jsx';
 
 class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			//TBD
+			//TBD... possible implementation of redux
 		}
 	}
 
@@ -15,14 +15,7 @@ class App extends React.Component {
 			<div>
 			  <h2>WELCOME TO DEEPSCAN</h2>
 			  <h4>Make testing free with this futuristic Scantron Web App</h4>
-        <Form inline>
-            <ControlLabel>Upload file!</ControlLabel>
-            <input
-              className="fileInput"
-              type="file"
-              onChange={(e)=>this.handleImageChange(e)}
-            />
-        </Form>
+        <Upload />
 			</div>
 		)
 	}
