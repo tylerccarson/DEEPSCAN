@@ -1,2 +1,3 @@
-.idea
 node_modules
+clint/dist/bundle.js
+package-lock.json

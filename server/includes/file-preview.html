@@ -1,3 +1,6 @@
+<!-- kept for record of the originator's vision for functionality and UI/UX -->
+
+
 <input id="upload-input" type="file" name="uploads[]">
 <div class="progress">
 	<div class="progress-bar" role="progressbar"></div>
@@ -72,47 +75,6 @@
 		}
 	});
 
-
-	/*
-	var loadFile = function (event) {
-		var output = $('#file-preview');
-		output.text("");
-		for (var i = 0; i < event.target.files.length; i++) {
-			var newImgTag = $('<img style="max-width:100%;" class="preview' + i + '"/>');
-			var file = event.target.files[i];
-			$(newImgTag).attr("src", (URL.createObjectURL(file)));
-			$(output).append(newImgTag);
-
-
-
-			file.convertToBase64(function (base64) {
-				//alert(base64);
-				//$("#b64").text(base64);
-			});
-		}
-
-		$("#submit-btn").click(function () {
-			$.post("api/upload", function (err, response) {
-				$("")[0].files
-				console.log(response);
-				console.log(err);
-			});
-		});
-
-		$("#submit-btn").show();
-		$("#preview-title").show();
-	};
-
-	File.prototype.convertToBase64 = function (callback) {
-		var reader = new FileReader();
-		reader.onload = function (e) {
-			callback(e.target.result)
-		};
-		reader.onerror = function (e) {
-			callback(null);
-		};
-		reader.readAsDataURL(this);
-	};*/
 </script>
 
 
