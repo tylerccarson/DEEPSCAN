@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import { Form, FormControl, FormGroup, ControlLabel } from 'react-bootstrap';
+import { Form, FormControl, FormGroup, ControlLabel, Button } from 'react-bootstrap';
 import FormData from 'form-data';
 
 class Upload extends React.Component {
@@ -19,7 +19,7 @@ class Upload extends React.Component {
 
   handleImageChange(e) {
     e.preventDefault();
-    
+
     let reader = new FormData();
     reader.append('File', e.target.files[0]);
 
@@ -64,6 +64,14 @@ class Upload extends React.Component {
             type="file"
             onChange={(e)=>this.handleImageChange(e)}
           />
+          <Button
+            className="submitButton"
+            type="submit"
+            onClick={(e)=>this.handleSubmit(e)}
+            label="Upload Image"
+          >
+          Submit
+          </Button>
       	</Form>
       </div>
 		)
