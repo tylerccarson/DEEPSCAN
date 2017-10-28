@@ -8,7 +8,7 @@ var express = require('express'),
 	formidable = require('formidable'),
 	fs = require('fs');
 
-var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+var env = process.env.NODE_ENV || 'development';
 
 var app = express();
 
