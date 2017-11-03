@@ -44,16 +44,16 @@ app.post('/api/upload', function (req, res) {
 	    	args: [file]
 	    }
 
-	    PythonShell.run(path.join(__dirname + '/python/deep_scan.py'), options, (err, data) => {
-	    	console.log('response from python script: ', data);
-	    	if (err) {
-	    		res.send(err);
-	      }
-	      //mocked for now
-	      console.log('mock data for reading section: ', mock_answers.sat_1_reading);
-	      data = mock_answers.sat_1_reading
-	      res.send(data);
-	    })
+	    // PythonShell.run(path.join(__dirname + '/python/deep_scan.py'), options, (err, data) => {
+	    // 	console.log('response from python script: ', data);
+	    // 	if (err) {
+	    // 		res.send(err);
+	    //   }
+	      //mocked for now, eventually should fetch the correct key from the mock data folder, or even better, from the MongoDB
+	      console.log('sending mock data for reading section');
+	      let mock = mock_answers.sat_1_reading
+	      res.send(mock);
+	    // })
 
 	});
 

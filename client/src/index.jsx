@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Upload from './components/Upload.jsx';
+import { Grid, Row, Col } from 'react-bootstrap'
 
 class App extends React.Component {
 	constructor(props) {
@@ -11,12 +12,29 @@ class App extends React.Component {
 	}
 
 	render() {
+
+    const style = {
+    	title: {
+    		color: 'darkBlue'
+    	}
+    }
+
 		return (
-			<div>
-			  <h2>WELCOME TO DEEPSCAN</h2>
-			  <h4>Make testing free with this futuristic Scantron Web App</h4>
-        <Upload />
-			</div>
+		  <Grid>
+		  	<Row>
+		  	  <Col md={6} sm={6} xsHidden >
+			  		<h2 style={style.title} >WELCOME TO DEEPSCAN</h2>
+			  	</Col>
+			  </Row>
+			  <Row>
+			    <Col md={6} sm={6} xsHidden >
+			  	  <h4>Make testing free with this futuristic Scantron Web App</h4>
+			  	</Col>
+			  </Row>
+			  <Row>
+        	<Upload />
+        </Row>
+      </Grid>
 		)
 	}
 }

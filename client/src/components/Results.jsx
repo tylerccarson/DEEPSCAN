@@ -8,20 +8,30 @@ class Results extends React.Component {
 
   render() {
 
+  	console.log('userAnswers: ', this.props.userAnswers);
+  	console.log('keyAnswers: ', this.props.keyAnswers);
+
+  	const style = {
+      list: {
+      	width: '50%'
+      }
+  	};
+
   	return (
-  		<div>
+  		<div style={style.list}>
         <ListGroup>
 
           {this.props.userAnswers.map((entry, i) => {
 
 			      var score;
-			      if (entry === keyAnswers[i]) {
-			      	score = entry + ' is correct.';
+			      var question = i + 1;
+			      if (entry === this.props.keyAnswers[i]) {
+			      	score = question + ') ' + entry + ' is correct.';
 			      } else {
-			      	score = entry + ' is incorrect. The correct answer is ' + keyAnswers[i];
+			      	score = question + ') ' + entry + ' is incorrect. The correct answer is ' + this.props.keyAnswers[i] + '.';
 			      }
 
-          	return <ListGroupItem>{score}</ListGroupItem>
+          	return <ListGroupItem key={i} >{score}</ListGroupItem>
 
           })}
 
