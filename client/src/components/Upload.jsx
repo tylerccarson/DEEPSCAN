@@ -2,7 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import { Form, FormControl, FormGroup, ControlLabel, Button, DropdownButton, MenuItem } from 'react-bootstrap';
 import FormData from 'form-data';
-import data from '../data/exampleExamData.js';
+import data from '../data/examData.js';
+import Results from './Results.jsx';
 
 class Upload extends React.Component {
   constructor(props) {
@@ -11,7 +12,8 @@ class Upload extends React.Component {
   		open: false,
   		file: '',
   		section: '',
-  		exams: data.exams
+  		exams: data.exams,
+  		results: []
   	}
 
   	this.handleImageChange = this.handleImageChange.bind(this);
@@ -41,6 +43,9 @@ class Upload extends React.Component {
     axios.post('/api/upload', this.state.file)
       .then((res) => {
         console.log(res);
+        this.setState({
+        	results: res.data
+        })
       })
       .catch((error) => {
         console.log('error', error);
@@ -59,10 +64,6 @@ class Upload extends React.Component {
     });
   }
 
-  getTests() {
-  	//to do
-  }
-
   handleExamSelection(eventKey) {
   	this.setState({
   		section: this.state.exams[eventKey - 1]
@@ -79,29 +80,38 @@ class Upload extends React.Component {
   	}
 
   	return (
-  		<div style={style.form} >
-  			<Form>
-          <ControlLabel>Upload file!</ControlLabel>
-          <input
-            className="fileInput"
-            type="file"
-            onChange={(e)=>this.handleImageChange(e)}
-          />
-          <DropdownButton title={'Which exam?'} id={1}>
-            {this.state.exams.map((exam, i) => {
-            	return <MenuItem eventKey={i} key={i} onSelect={this.handleExamSelection} >{exam}</MenuItem>
-            })}
-          </DropdownButton>
-          <div>{this.state.section}</div>
-          <Button
-            className="submitButton"
-            type="submit"
-            onClick={(e)=>this.handleSubmit(e)}
-            label="Upload Image"
-          >
-          Submit
-          </Button>
-      	</Form>
+      <div>
+	  		<div style={style.form} >
+	  			<Form>
+	          <ControlLabel>Upload file!</ControlLabel>
+	          <input
+	            className="fileInput"
+	            type="file"
+	            onChange={(e)=>this.handleImageChange(e)}
+	          />
+	          <DropdownButton title={'Which exam?'} id={1}>
+	            {this.state.exams.map((exam, i) => {
+	            	return <MenuItem eventKey={i} key={i} onSelect={this.handleExamSelection} >{exam}</MenuItem>
+	            })}
+	          </DropdownButton>
+	          <div>{this.state.section}</div>
+	          <Button
+	            className="submitButton"
+	            type="submit"
+	            onClick={(e)=>this.handleSubmit(e)}
+	            label="Upload Image"
+	          >
+	          Submit
+	          </Button>
+	      	</Form>
+	      </div>
+	      <div>
+	        <Results 
+	          section={this.state.section} 
+	          keyAnswers={this.state.exams.keys[this.state.section]}
+	          userAnswers={this.state.results} 
+	        />
+	      </div>
       </div>
 		)
   }

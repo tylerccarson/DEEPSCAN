@@ -5,6 +5,7 @@ var path = require('path');
 var formidable = require('formidable');
 var fs = require('fs');
 var db = require('../database/index.js');
+var mock_answers = require('./mock_data/mock_answers.js');
 
 var app = express();
 
@@ -38,11 +39,6 @@ app.post('/api/upload', function (req, res) {
 	// every time a file has been uploaded successfully,
 	// rename it to it's orignal name
 	form.on('file', function (name, file) {
-		
-		fs.rename(file.path, path.join(form.uploadDir, 'input.png'), (err) => {
-			if (err) {
-				console.log(err);
-			}
 	    
 	    var options = {
 	    	args: [file]
@@ -53,9 +49,11 @@ app.post('/api/upload', function (req, res) {
 	    	if (err) {
 	    		res.send(err);
 	      }
+	      //mocked for now
+	      console.log('mock data for reading section: ', mock_answers.sat_1_reading);
+	      data = mock_answers.sat_1_reading
 	      res.send(data);
 	    })
-		});
 
 	});
 
