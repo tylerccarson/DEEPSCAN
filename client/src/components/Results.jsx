@@ -8,9 +8,6 @@ class Results extends React.Component {
 
   render() {
 
-  	console.log('userAnswers: ', this.props.userAnswers);
-  	console.log('keyAnswers: ', this.props.keyAnswers);
-
   	const style = {
       list: {
       	width: '50%'

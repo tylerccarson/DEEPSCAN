@@ -2,7 +2,6 @@ import React from 'react';
 import axios from 'axios';
 import { Form, FormControl, Button, DropdownButton, Panel, MenuItem, Row, Col } from 'react-bootstrap';
 import FormData from 'form-data';
-import data from '../data/examData.js';
 import Results from './Results.jsx';
 
 class Upload extends React.Component {
@@ -11,8 +10,12 @@ class Upload extends React.Component {
   	this.state = {
   		open: false,
   		file: '',
+      exam: '',
+      version: '',
   		section: '',
-  		exams: data,
+  		exams: [],
+      versions: [],
+      sections: [],
   		keyAnswers: [],
   		userAnswers: []
   	}
@@ -21,8 +24,42 @@ class Upload extends React.Component {
     this.handleRequestClose = this.handleRequestClose.bind(this);
     this.handleTouchTap = this.handleTouchTap.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleExamSelection = this.handleExamSelection.bind(this);
+    this.handleSelection = this.handleSelection.bind(this);
 
+  }
+
+  componentWillMount() {
+    axios.get('/exams')
+      .then((data) => {
+
+        let hash = {
+          exams: {},
+          versions: {},
+          sections: {}
+        };
+
+        for (var i = 0; i < data.data.length; i++) {
+          if (hash.exams[data.data[i].exam] === undefined) {
+            hash.exams[data.data[i].exam] = i;
+          }
+          if (hash.versions[data.data[i].number] === undefined) {
+            hash.versions[data.data[i].number] = i;
+          }
+          if (hash.sections[data.data[i].section] === undefined) {
+            hash.sections[data.data[i].section] = i;
+          }
+        }
+
+        this.setState({
+          exams: Object.keys(hash.exams),
+          versions: Object.keys(hash.versions),
+          sections: Object.keys(hash.sections)
+        });
+
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   handleImageChange(e) {
@@ -41,16 +78,38 @@ class Upload extends React.Component {
     e.preventDefault();
     this.handleTouchTap();
 
-    axios.post('/api/upload', this.state.file)
-      .then((res) => {
-        console.log(res);
-        this.setState({
-        	userAnswers: res.data
+    if (this.state.exam !== '' && this.state.version !== '' && this.state.section !== '' && this.state.file !== '') {
+
+      let options = {
+        exam: this.state.exam,
+        version: this.state.version,
+        section: this.state.section
+      }
+
+      let key;
+
+      axios.get('/key', {
+          params: options
         })
-      })
-      .catch((error) => {
-        console.log('error', error);
-      });
+        .then((res) => {
+          key = res.data;
+
+          axios.post('/api/upload', this.state.file)
+            .then((res) => {
+              this.setState({
+              	userAnswers: res.data,
+                keyAnswers: key
+              })
+            })
+            .catch((error) => {
+              console.log('error', error);
+            });
+        })
+
+    } else {
+      alert('Not all fields have been completed. Try again.');
+    }
+
   }
 
   handleTouchTap() {
@@ -65,21 +124,17 @@ class Upload extends React.Component {
     });
   }
 
-  handleExamSelection(eventKey) {
-    let section = this.state.exams.exams[eventKey];
-  	this.setState({
-  		section: section,
-  		keyAnswers: this.state.exams.keys[section]
-  	});
+  handleSelection(eventKey, event) {
+    this.setState({
+      [event.target.name]: this.state[event.target.name + 's'][eventKey]
+    });
   }
+
 
   render() {
 
   	const style = {
-  		form: {
-  			// display: 'flex',
-  			// flexDirection: 'column'
-  		}
+  		form: {}
   	}
 
   	return (
@@ -89,19 +144,37 @@ class Upload extends React.Component {
 			  		<Panel>
 			  		  <Row>
 				  			<Form>
+
 				  			  <Col md={6} sm={6} xs={6} >
 					          <FormControl
 					            type="file"
 					            onChange={(e)=>this.handleImageChange(e)}
 					          />
+
 					          <DropdownButton title={'Which exam?'} id={1}>
-					            {this.state.exams.exams.map((exam, i) => {
-					            	return <MenuItem eventKey={i} key={i} onSelect={this.handleExamSelection} >{exam}</MenuItem>
+                      {this.state.exams.map((exam, i) => {
+                        return <MenuItem name='exam' eventKey={i} key={i} onSelect={this.handleSelection} >{exam}</MenuItem>
+                      })}
+                    </DropdownButton>
+                    <div>{this.state.exam}</div>
+
+                    <DropdownButton title={'Which version?'} id={2}>
+					            {this.state.versions.map((version, i) => {
+					            	return <MenuItem name='version' eventKey={i} key={i} onSelect={this.handleSelection} >{version}</MenuItem>
 					            })}
 					          </DropdownButton>
+                    <div>{this.state.version}</div>
+
+                    <DropdownButton title={'Which section?'} id={3}>
+                      {this.state.sections.map((section, i) => {
+                        return <MenuItem name='section' eventKey={i} key={i} onSelect={this.handleSelection} >{section}</MenuItem>
+                      })}
+                    </DropdownButton>
 					          <div>{this.state.section}</div>
+
 				          </Col>
 				          <Col md={6} sm={6} xs={6} >
+
 					          <Button
 					            className="submitButton"
 					            type="submit"

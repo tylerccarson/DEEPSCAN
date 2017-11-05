@@ -41,9 +41,9 @@ Exam.find({
 			number: 1,
 			section: 'reading',
 			answers: [
-		    'B', 'B', 'C', 'B', 'C', 'D', 'D', 'B', 'C', 'B', 'A',
-		    'B', 'D', 'A', 'A', 'C', 'C', 'D', 'A', 'D', 'A', 'B',
-		    'D', 'A', 'C', 'B', 'D', 'C', 'D', 'A', 'D', 'B', 'A', 
+		    'B', 'B', 'C', 'A', 'C', 'D', 'D', 'B', 'C', 'B', 'A',
+		    'B', 'D', 'A', 'A', 'C', 'C', 'D', 'A', 'B', 'A', 'B',
+		    'D', 'D', 'C', 'B', 'D', 'C', 'A', 'A', 'D', 'B', 'A', 
 		    'C', 'B', 'D', 'C', 'C', 'B', 'C', 'B', 'B', 'A', 'A',
 		    'D', 'C', 'B', 'A', 'D', 'B', 'D', 'A'
 		  ]
@@ -145,3 +145,5 @@ Exam.find({
 		console.log('SAT 1 Math Calc already seeded')
 	}
 });
+
+module.exports.Exam = Exam;

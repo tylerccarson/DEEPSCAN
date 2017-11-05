@@ -68,13 +68,25 @@ app.post('/api/upload', function (req, res) {
 
 });
 
-app.get('/api/scantest', function (req, res) {
-	var pyshell = new PythonShell('/python/deep_scan.py');
-	pyshell.on('message', function (message) {
-		//OUTPUT deep_scan.py
-		console.log(message);
-
-		//no response??
+app.get('/exams', (req, res) => {
+	db.Exam.find({}, 'exam number section', (err, docs) => {
+    if (err) {
+    	res.error(err);
+    }
+		console.log('fetched all exams');
+		res.send(docs);
 	});
 });
 
+app.get('/key', (req, res) => {
+	db.Exam.findOne({
+    exam: req.query.exam,
+    number: req.query.version,
+    section: req.query.section
+	}, 'answers', (err, docs) => {
+		if (err) {
+			res.error(err);
+		}
+		res.send(docs.answers);
+	});
+});
