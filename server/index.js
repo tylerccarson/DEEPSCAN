@@ -36,26 +36,37 @@ app.post('/api/upload', function (req, res) {
 	// store all uploads in the /uploads directory
 	form.uploadDir = path.join(__dirname, '/python/uploads');
 
-	// every time a file has been uploaded successfully,
-	// rename it to it's orignal name
+	// rename it to input.png
 	form.on('file', function (name, file) {
 
-	    var options = {
-	    	args: [file]
-	    }
+		  fs.rename(file.path, path.join(form.uploadDir, 'input.jpg'), (err) => {
 
-	    PythonShell.run(path.join(__dirname + '/python/deep_scan.py'), options, (err, data) => {
-	    	console.log('response from python script: ', data);
-	    	if (err) {
-	    		res.send(err);
-	      }
+		  	if (err) {
+		  		console.log(err);
+		  	}
 
-	      res.send(data);
+		    // var options = {
+		    // 	mode: 'binary',
+		    // 	script: '/python/deep_scan.py',
+		    // 	args: [file]
+		    // }
 
-	      //mocking option:
-	      // console.log('sending mock data for reading section');
-	      // let mock = mock_answers.sat_1_reading
-	    });
+		    PythonShell.run('python/deep_scan.py', (err, results) => {
+		    	console.log('response from python script: ', results);
+
+		    	if (err) {
+		    		res.send(err);
+		      }
+
+		      res.send(results);
+
+		      //mocking option:
+		      // console.log('sending mock data for reading section');
+		      // let mock = mock_answers.sat_1_reading
+		    });
+		  	
+		  });
+
 
 	});
 

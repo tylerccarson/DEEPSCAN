@@ -7,9 +7,12 @@ import numpy as np
 import argparse
 import imutils
 import cv2
+import os
+
 
 # Load the image, convert it to grayscale, blur it slightly, find edges, and dilate
-image = cv2.imread(path_image_name)
+filepath = os.path.dirname(os.path.realpath(__file__))
+image = cv2.imread(filepath + '/uploads/input.jpg')
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 blurred = cv2.GaussianBlur(gray, (5, 5), 0)
 edged = cv2.Canny(blurred, 75, 120)
@@ -195,3 +198,6 @@ student_answers_single=list(np.repeat(5,len(students[student_id])))
 
 for answer in students[student_id]:
     student_answers_single[answer[0]-1]=answer[1]
+
+#print answers
+print students[student_id]
