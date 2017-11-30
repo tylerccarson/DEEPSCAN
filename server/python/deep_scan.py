@@ -1,342 +1,197 @@
-import cv2
-import glob
-import matplotlib.image as mpimg
+# Import packages
+from imutils.perspective import four_point_transform
 import matplotlib.pyplot as plt
+from imutils import contours
+import random
 import numpy as np
-from PIL import Image
-import scipy
-from keras.models import load_model
-import math
-from scipy.misc import imresize
-import json
-import base64
-import sys
-import os
+import argparse
+import imutils
+import cv2
 
-filepath = os.path.dirname(os.path.realpath(__file__))
-paper = cv2.imread(filepath + '/input.png')
+# Load the image, convert it to grayscale, blur it slightly, find edges, and dilate
+image = cv2.imread(path_image_name)
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+edged = cv2.Canny(blurred, 75, 120)
 
-def abs_thresh(img, orient='x', thresh=(0, 255), ksize=3):
-    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    if orient == 'x':
-        sobel = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=ksize)
-    elif orient == 'y':
-        sobel = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=ksize)
-    else:
-        sobel = None
-    abs_sobel = np.absolute(sobel)
-    scaled_sobel = np.uint8(255 * abs_sobel / np.max(abs_sobel))
-    binary_output = np.zeros_like(scaled_sobel)
-    binary_output[(scaled_sobel >= thresh[0]) & (scaled_sobel <= thresh[1])] = 1
-    return binary_output
+kernel = cv2.getStructuringElement(cv2.MORPH_CROSS,(3,3))
+dilated = cv2.dilate(edged,kernel,iterations = 8) # dilate
 
-def dir_thresh(img, thresh=(0.7, 1.3), ksize=3):
-    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=ksize)
-    sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=ksize)
-    abs_sobelx = np.absolute(sobelx)
-    abs_sobely = np.absolute(sobely)
-    arc_sobel = np.arctan2(abs_sobely, abs_sobelx)
-    # Apply threshold
-    binary_output = np.zeros_like(arc_sobel)
-    binary_output[(arc_sobel >= thresh[0]) & (arc_sobel <= thresh[1])] = 1
-    return binary_output
 
-def region_of_interest(img, vertices):
-    """
-    Applies an image mask.
-    
-    Only keeps the region of the image defined by the polygon
-    formed from `vertices`. The rest of the image is set to black.
-    """
-    #defining a blank mask to start with
-    mask = np.zeros_like(img)   
-    
-    #defining a 3 channel or 1 channel color to fill the mask with depending on the input image
-    if len(img.shape) > 2:
-        channel_count = img.shape[2]  # i.e. 3 or 4 depending on your image
-        ignore_mask_color = (255,) * channel_count
-    else:
-        ignore_mask_color = 255
-        
-    #filling pixels inside the polygon defined by "vertices" with the fill color    
-    cv2.fillPoly(mask, vertices, ignore_mask_color)
-    
-    #returning the image only where mask pixels are nonzero
-    masked_image = cv2.bitwise_and(img, mask)
-    return masked_image
+# Find contours in the edge map, then initialize the contour that corresponds to the document
+cnts = cv2.findContours(dilated.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+cnts = cnts[0] if imutils.is_cv2() else cnts[1]
+docCnt = None
 
-xsize = paper.shape[1]
-ysize = paper.shape[0]
+# Ensure that at least one contour was found
+if len(cnts) > 0:
+    # Sort the contours according to their size in
+    # descending order
+    cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
 
-left_bottom = (0, 11 / 50 * ysize)
-right_bottom = (xsize, 11 / 50 * ysize)
-left_top = (0, 0)
-right_top = (xsize, 0)
-vertices = np.array([[left_bottom, right_bottom, right_top, left_top]], dtype=np.int32)
-head = region_of_interest(paper, vertices)
+    # Loop over the sorted contours
+    for c in cnts:
+        # Approximate the contour
+        peri = cv2.arcLength(c, True)
+        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
 
-left_bottom = (0, ysize)
-right_bottom = (xsize, ysize)
-left_top = (0, 11 / 50 * ysize)
-right_top = (xsize, 11 / 50 * ysize)
-vertices = np.array([[left_bottom, right_bottom, right_top, left_top]], dtype=np.int32)
-body = region_of_interest(paper, vertices)
+        # If our approximated contour has four points, then we can assume we have found the paper
+        if len(approx) == 4:
+            docCnt = approx
+            break
 
-head_vert_binary = abs_thresh(head, thresh=(30, 255), ksize=3)
-head_vert_hist = np.sum(head_vert_binary, axis=0)
-head_horiz_binary = abs_thresh(head, orient='y', thresh=(30, 255), ksize=3)
-head_horiz_hist = np.sum(head_horiz_binary, axis=1)
+# Apply a four point perspective transform to both the
+# original image and grayscale image to obtain a top-down
+# birds eye view of the paper
+paper = four_point_transform(image, docCnt.reshape(4, 2))
+warped = four_point_transform(gray, docCnt.reshape(4, 2))
 
-tmp = []
-max_ = max(head_horiz_hist)
-for i in range(len(head_horiz_hist)):
-    if head_horiz_hist[i] < max_ / 2:
-        continue
-    tmp.append(i)
-head_horiz_lines = []
-sum_ = tmp[0]
-count = 1
-for i in range(1, len(tmp)):
-    if tmp[i] - tmp[i - 1] < 3:
-        sum_ += tmp[i]
-        count += 1
-    else:
-        head_horiz_lines.append(sum_ / count)
-        sum_ = tmp[i]
-        count = 1
+# Apply adaptive thresholding with gaussian weighted average to binarize the warped and blurred piece of paper
+blurred = cv2.GaussianBlur(warped, (25, 25), 0)
+thresh=cv2.adaptiveThreshold(blurred,250,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,1001,12)
 
-# vertical lines
-tmp = []
-max_ = max(head_vert_hist)
-for i in range(len(head_vert_hist)):
-    if head_vert_hist[i] < max_ / 2:
-        continue
-    tmp.append(i)
-head_vert_lines = []
-sum_ = tmp[0]
-count = 1
-for i in range(1, len(tmp)):
-    if tmp[i] - tmp[i - 1] < 3:
-        sum_ += tmp[i]
-        count += 1
-    else:
-        head_vert_lines.append(sum_ / count)
-        sum_ = tmp[i]
-        count = 1
-head_vert_lines.append(sum_ / count)
+# Find edges in the warped image and dilate
+edged = cv2.Canny(warped, 75, 120)
+kernel = cv2.getStructuringElement(cv2.MORPH_CROSS,(3,3))
+dilated = cv2.dilate(edged,kernel,iterations = 4) # dilate
 
-body_vert_binary = abs_thresh(body, thresh=(30, 255), ksize=3)
-body_vert_hist = np.sum(body_vert_binary, axis=0)
-body_horiz_binary = abs_thresh(body, orient='y', thresh=(30, 255), ksize=3)
-body_horiz_hist = np.sum(body_horiz_binary, axis=1)
+# Find contours in the thresholded image
+cnts = cv2.findContours(dilated.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+cnts = cnts[0] if imutils.is_cv2() else cnts[1]
 
-# find lines in body
+# Initialize the list to contain the contours of the ids and questions.
+questionCnts = []
 
-# horizontal lines
-tmp = []
-max_ = max(body_horiz_hist)
-for i in range(len(body_horiz_hist)):
-    if body_horiz_hist[i] < max_ / 2:
-        continue
-    tmp.append(i)
-body_horiz_lines = []
-sum_ = tmp[0]
-count = 1
-for i in range(1, len(tmp)):
-    if tmp[i] - tmp[i - 1] < 3:
-        sum_ += tmp[i]
-        count += 1
-    else:
-        body_horiz_lines.append(sum_ / count)
-        sum_ = tmp[i]
-        count = 1
-body_horiz_lines.append(sum_ / count)
-body_horiz_lines.pop(0)
+# Loop over the contours
+for c in cnts:
+    # Compute the bounding box of the contour, then use the
+    # bounding box to derive the aspect ratio
+    (x, y, w, h) = cv2.boundingRect(c)
+    ar = w / float(h)
 
-# vertical lines
-tmp = []
-max_ = max(body_vert_hist)
-for i in range(len(body_vert_hist)):
-    if body_vert_hist[i] < max_ / 2:
-        continue
-    tmp.append(i)
-body_vert_lines = []
-sum_ = tmp[0]
-count = 1
-for i in range(1, len(tmp)):
-    if tmp[i] - tmp[i - 1] < 3:
-        sum_ += tmp[i]
-        count += 1
-    else:
-        body_vert_lines.append(sum_ / count)
-        sum_ = tmp[i]
-        count = 1
-body_vert_lines.append(sum_ / count)
+    # In order to label the contour as a question, region
+    # should be sufficiently wide, sufficiently tall, and
+    # have an aspect ratio approximately equal to 1
+    if w >= 100 and h >= 100 and ar >= 0.9 and ar <= 1.1:
+        questionCnts.append(c)
 
-def preprocess_image(rgb_image, thickness=10):
-    res = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2GRAY)
-    # print(res.shape)
-    # res = cv2.resize(res, (28, 28), interpolation=cv2.INTER_AREA)
-    # print(res.shape)
-    for i in range(res.shape[0]):
-        for j in range(thickness):
-            res[i][j] = 255
-    for i in range(thickness):
-        for j in range(res.shape[0]):
-            res[i][j] = 255
-    for i in range(res.shape[0] - 1, res.shape[0] - thickness, -1):
-        for j in range(res.shape[0]):
-            res[i][j] = 255
-    for i in range(res.shape[0]):
-        for j in range(res.shape[0] - 1, res.shape[0] - thickness, -1):
-            res[i][j] = 255
-#     for i in range(28):
-#         for j in range(28):
-#             if res[i][j] <= 100:
-#                 res[i][j] = 0
-    return res
+# Sort the question contours top-to-bottom,
+questionCnts = contours.sort_contours(questionCnts,method="top-to-bottom")[0]
 
-def reshape_images(images):
-    res = []
-    for i in range(len(images)):
-        res.append(images[i].reshape((images[i].shape[0], images[i].shape[1], 1)))
-    return np.array(res)
+# Identify the id number in each id grouping.
+id1=None
+id2=None
 
-def center(image):
-    res = np.zeros(image.shape)
-    for i in range(res.shape[0]):
-        for j in range(res.shape[1]):
-            res[i][j] = 255
-    d = {}
-    max_x, max_y = -1, -1
-    min_x, min_y = float('inf'), float('inf')
-    for i in range(image.shape[0]):
-        for j in range(image.shape[1]):
-            if image[i][j] == 255:
-                continue
-            min_x = min(min_x, j)
-            min_y = min(min_y, i)
-            max_x = max(max_x, j)
-            max_y = max(max_y, i)
-            d[(i, j)] = image[i][j]
-    if len(d) < 40:
-        return res
-    center = (33, 33)
-    centroid = (int((max_x + min_x) / 2), int((max_y + min_y) / 2))
-#     print(centroid)
-    shift = (center[0] - centroid[0], center[1] - centroid[1])
-    # print(center)
-#     print(shift)
-#     print()
-    for key in d:
-        x = key[0] + shift[1]
-        y = key[1] + shift[0]
-        if x >= 0 and x < image.shape[0] and y >= 0 and y < image.shape[1]:
-            res[x][y] = d[key]
-#     plt.figure()
-#     plt.imshow(res, cmap='gray')
-    return res
+# Sort each row of contours from left to right
+for (index,value) in enumerate(np.arange(0,20,10)):
+    cnts=contours.sort_contours(questionCnts[value:value+10])[0]
 
-def scale_digit(image):
-    min_y = float('inf')
-    max_y = -1
-    for i in range(image.shape[0]):
-        for j in range(image.shape[1]):
-            if image[i][j] == 255:
-                continue
-            min_y = min(min_y, i)
-            max_y = max(max_y, i)
-#     print(max_y)
-#     print(min_y)
-#     print()
-    diff = 50 / (max_y - min_y)
-    res = imresize(image, (int(image.shape[0] * diff), int(image.shape[1] * diff)))
-    center = (int(res.shape[0] / 2), int(res.shape[1] / 2))
-    return res[int(center[0] - image.shape[0] / 2): int(center[0] + image.shape[0] / 2), int(center[1] - image.shape[1] / 2): int(center[1] + image.shape[1] / 2)]
+    fill_count=0
 
-first_name, last_name = [], []
+    # Construct a mask that reveals only the current
+    # "bubble" for the question
+    for (index2, value2) in enumerate(cnts):
+        mask=np.zeros(thresh.shape,dtype="uint8")
+        cv2.drawContours(mask,[value2],-1,255,-1)
 
-for i in range(0, len(head_horiz_lines) - 1):
-    for j in range(1, len(head_vert_lines) - 1):
-        side_len = math.ceil(head_vert_lines[j + 1] - head_vert_lines[j])
-        region = paper[int(head_horiz_lines[i]): int(head_horiz_lines[i] + side_len), int(head_vert_lines[j]): int(head_vert_lines[j] + side_len)]
-        res = center(preprocess_image(region, thickness=8))
-        is_zero = True
-        for k in range(res.shape[0]):
-            for l in range(res.shape[1]):
-                if res[k][l] != 255:
-                    is_zero = False
-                    break
-        if is_zero:
-            continue
-        if i == 0:
-            first_name.append(res)
-        else:
-            last_name.append(res)
+        # Apply the mask to the thresholded image, then
+        # count the number of non-zero pixels in the
+        # bubble area
+        mask=cv2.bitwise_and(thresh,thresh,mask=mask)
+        total=cv2.countNonZero(mask)
 
-for i in range(len(first_name)):
-    first_name[i] = scale_digit(first_name[i])
-    # plt.figure()
-    # plt.imshow(first_name[i], cmap='gray')
-for i in range(len(last_name)):
-    last_name[i] = scale_digit(last_name[i])
-    # plt.figure()
-    # plt.imshow(last_name[i], cmap='gray')
+        # If the current total has a total number of non-zero pixels
+        # greater than 9000, then we are examining a bubbled-in answer
+        if(((id1 is None) or (total > 9000)) and (index2<=4)):
+            if(index==1):
+                id1=(total,index2+5)
+            else:
+                id1=(total,index2)
 
-first_name, last_name = np.array(first_name), np.array(last_name)
-first_name, last_name = reshape_images(first_name), reshape_images(last_name)
+            if(total>9000):
+                fill_count +=1
 
-model = load_model(filepath + '/c_model.h5')
+        if(((id2 is None) or (total > 9000)) and (index2>4)):
+            if(index==1):
+                id2=(total,index2)
+            else:
+                id2=(total,index2-5)
 
-first_pred = model.predict(first_name)
-last_pred = model.predict(last_name)
+            if(total>9000):
+                fill_count +=1
 
-first_name_val = []
-for n in first_pred:
-    first_name_val.append(int(np.argmax(n)))
+if (fill_count>2):
+    student_id='ERROR: NO BUBBLE FILLED OR MORE THAN ONE BUBBLE FILLED IN EACH ID GROUP'
+elif (min(id1[1],id2[1])==0):
+    student_id=max(id1[1],id2[1])
+else:
+    student_id=int(str(id1[1])+str(id2[1]))
 
-last_name_val = []
-for n in last_pred:
-    last_name_val.append(int(np.argmax(n)))
+# Generate a dictionary
+students={student_id:[]}
 
-answers = []
+# Sort each row of contours from left to right
+for (index,value) in enumerate(np.arange(20,len(questionCnts),12)):
+    bubbled1=None
+    bubbled2=None
 
-for i in range(1, len(body_vert_lines), 2):
-    for j in range(0, len(body_horiz_lines) - 1):
-        side_len = 68
-        region = paper[int(body_horiz_lines[j]): int(body_horiz_lines[j] + side_len), int(body_vert_lines[i]): int(body_vert_lines[i] + side_len)]
-        res = center(preprocess_image(region, thickness=8))
-        is_zero = True
-        for k in range(res.shape[0]):
-            for l in range(res.shape[1]):
-                if res[k][l] != 255:
-                    is_zero = False
-                    break
-        if is_zero:
-            continue
-        answers.append(res)
+    bubbled3=None
 
-for i in range(len(answers)):
-    # print(i)
-    answers[i] = scale_digit(answers[i])
-    # plt.figure()
-    # plt.imshow(answers[i], cmap='gray')
-answers = np.array(answers)
-answers = reshape_images(answers)
+    cnts=contours.sort_contours(questionCnts[value:value+12])[0]
 
-answer_pred = model.predict(answers)
+    fill_count1=0
+    fill_count2=0
+    fill_count3=0
 
-answers_val = []
-for n in answer_pred:
-    answers_val.append(int(np.argmax(n)))
+    # Construct a mask that reveals only the current
+    # "bubble" for the question
+    for (index2, value2) in enumerate(cnts):
+        mask=np.zeros(thresh.shape,dtype="uint8")
+        cv2.drawContours(mask,[value2],-1,255,-1)
 
-d = {}
-d['first_name'] = first_name_val
-d['last_name'] = last_name_val
-d['answers'] = answers_val
+        # Apply the mask to the thresholded image, then
+        # count the number of non-zero pixels in the
+        # bubble area
+        mask=cv2.bitwise_and(thresh,thresh,mask=mask)
+        total=cv2.countNonZero(mask)
 
-print(d)
+        # If the current total has a total number of non-zero pixels
+        # greater than 9000, then we are examining a bubbled-in answer
+        if(((bubbled1 is None) or (total > 9000)) and (index2<=3)):
+            bubbled1=(total,index2)
 
-with open('data.json', 'w') as fp:
-    json.dump(d, fp)
+            if (total)>9000:
+                fill_count1 +=1
+
+        if(((bubbled2 is None) or (total > 9000)) and ((index2>=4) and (index2<=7))):
+            bubbled2=(total,index2-4)
+
+            if (total)>9000:
+                fill_count2 +=1
+
+        if(((bubbled3 is None) or (total > 9000)) and (index2>=8)):
+            bubbled3=(total,index2-8)
+
+            if (total)>9000:
+                fill_count3 +=1
+
+    # Populate student answer within dictionary
+    if(fill_count1==1):
+        students[student_id].append((index+1,bubbled1[1]))
+    elif(fill_count1!=1):
+        students[student_id].append((index+1,4))
+
+    if(fill_count2==1):
+        students[student_id].append((index+16,bubbled2[1]))
+    elif(fill_count2!=1):
+        students[student_id].append((index+16,4))
+
+    if(fill_count3==1):
+        students[student_id].append((index+31,bubbled3[1]))
+    elif(fill_count3!=1):
+        students[student_id].append((index+31,4))
+
+student_answers_single=list(np.repeat(5,len(students[student_id])))
+
+for answer in students[student_id]:
+    student_answers_single[answer[0]-1]=answer[1]

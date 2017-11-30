@@ -96,6 +96,7 @@ class Upload extends React.Component {
 
           axios.post('/api/upload', this.state.file)
             .then((res) => {
+              console.log('api response: ', res);
               this.setState({
               	userAnswers: res.data,
                 keyAnswers: key
