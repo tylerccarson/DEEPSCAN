@@ -34,7 +34,7 @@ app.post('/api/upload', function (req, res) {
 	form.multiples = true;
 
 	// store all uploads in the /uploads directory
-	form.uploadDir = path.join(__dirname, '/python/uploads');
+	form.uploadDir = path.join(__dirname, '/../python/uploads');
 
 	// rename it to input.png
 	form.on('file', function (name, file) {
@@ -51,7 +51,7 @@ app.post('/api/upload', function (req, res) {
 		    // 	args: [file]
 		    // }
 
-		    PythonShell.run('python/deep_scan.py', (err, results) => {
+		    PythonShell.run('/../python/deep_scan.py', (err, results) => {
 		    	console.log('response from python script: ', results);
 
 		    	if (err) {
