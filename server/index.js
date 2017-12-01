@@ -39,33 +39,33 @@ app.post('/api/upload', function (req, res) {
 	// rename it to input.png
 	form.on('file', function (name, file) {
 
-		  fs.rename(file.path, path.join(form.uploadDir, 'input.jpg'), (err) => {
+	  fs.rename(file.path, path.join(form.uploadDir, 'input.jpg'), (err) => {
 
-		  	if (err) {
-		  		console.log(err);
-		  	}
+	  	if (err) {
+	  		console.log(err);
+	  	}
 
-		    // var options = {
-		    // 	mode: 'binary',
-		    // 	script: '/python/deep_scan.py',
-		    // 	args: [file]
-		    // }
+	    var options = {
+	    	mode: 'text',
+	    	pythonPath: __dirname + '/../.env/bin/python2.7',
+	    	pythonOptions: ['-u'],
+	    	scriptPath: __dirname + '/../python/',
+	    	args: []
+	    };
 
-		    PythonShell.run('/../python/deep_scan.py', (err, results) => {
-		    	console.log('response from python script: ', results);
+	    PythonShell.run('deep_scan.py', options, (err, results) => {
 
-		    	if (err) {
-		    		res.send(err);
-		      }
+	    	if (err) throw err;
 
-		      res.send(results);
+	    	console.log('response from python script: ', results);
+	      res.send(results);
 
-		      //mocking option:
-		      // console.log('sending mock data for reading section');
-		      // let mock = mock_answers.sat_1_reading
-		    });
-		  	
-		  });
+	      //mocking option:
+	      // console.log('sending mock data for reading section');
+	      // let mock = mock_answers.sat_1_reading
+	    });
+	  	
+	  });
 
 
 	});
