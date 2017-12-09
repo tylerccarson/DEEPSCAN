@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Form, FormControl, Button, DropdownButton, Panel, MenuItem, Row, Col } from 'react-bootstrap';
 import FormData from 'form-data';
 import Results from './Results.jsx';
+import LoadingSpinner from './LoadingSpinner.jsx';
 
 class Upload extends React.Component {
   constructor(props) {
@@ -17,7 +18,8 @@ class Upload extends React.Component {
       versions: [],
       sections: [],
   		keyAnswers: [],
-  		userAnswers: []
+  		userAnswers: [],
+      loading: false
   	}
 
   	this.handleImageChange = this.handleImageChange.bind(this);
@@ -94,18 +96,20 @@ class Upload extends React.Component {
         .then((res) => {
           key = res.data;
 
+          this.setState({
+            loading: true
+          });
+
           axios.post('/api/upload', this.state.file)
             .then((res) => {
-              console.log('api response: ', res);
 
               //OPTIMIZATION: have this sorted in the python script, not on the front end.
               let answers = res.data[0].sort((a, b) => {
                 return a[0] - b[0];
               });
 
-              console.log('sorted answers: ', answers);
-
               this.setState({
+                loading: false,
               	userAnswers: answers,
                 keyAnswers: key
               })
@@ -145,6 +149,18 @@ class Upload extends React.Component {
   	const style = {
   		form: {}
   	}
+
+    let results;
+
+    if (this.state.loading) {
+      results = <LoadingSpinner />
+    } else {
+      results = <Results 
+        section={this.state.section} 
+        keyAnswers={this.state.keyAnswers}
+        userAnswers={this.state.userAnswers} 
+      />
+    }
 
   	return (
       <div>
@@ -189,6 +205,7 @@ class Upload extends React.Component {
 					            type="submit"
 					            onClick={(e)=>this.handleSubmit(e)}
 					            label="Upload Image"
+                      disabled={this.state.loading}
 					          >
 					          Submit
 					          </Button>
@@ -199,11 +216,7 @@ class Upload extends React.Component {
 		      </Col>
 	      </Row>
 	      <Row>
-	        <Results 
-	          section={this.state.section} 
-	          keyAnswers={this.state.keyAnswers}
-	          userAnswers={this.state.userAnswers} 
-	        />
+	        {results}
 	      </Row>
       </div>
 		)

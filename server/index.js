@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/../client/dist'));
 
-var port = process.env.PORT || 3030;
+var port = process.env.PORT || 3000;
 app.listen(port, () => {
 	console.log('Listening on port ' + port + '...');
 });
@@ -56,7 +56,6 @@ app.post('/api/upload', function (req, res) {
 
 	    	if (err) throw err;
 
-	    	console.log('response from python script: ', results);
 	      res.send(results);
 
 	    });
