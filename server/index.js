@@ -5,7 +5,6 @@ var path = require('path');
 var formidable = require('formidable');
 var fs = require('fs');
 var db = require('../database/index.js');
-var mock_answers = require('./mock_data/mock_answers.js');
 
 var app = express();
 
@@ -60,9 +59,6 @@ app.post('/api/upload', function (req, res) {
 	    	console.log('response from python script: ', results);
 	      res.send(results);
 
-	      //mocking option:
-	      // console.log('sending mock data for reading section');
-	      // let mock = mock_answers.sat_1_reading
 	    });
 	  	
 	  });

@@ -97,8 +97,16 @@ class Upload extends React.Component {
           axios.post('/api/upload', this.state.file)
             .then((res) => {
               console.log('api response: ', res);
+
+              //OPTIMIZATION: have this sorted in the python script, not on the front end.
+              let answers = res.data[0].sort((a, b) => {
+                return a[0] - b[0];
+              });
+
+              console.log('sorted answers: ', answers);
+
               this.setState({
-              	userAnswers: res.data,
+              	userAnswers: answers,
                 keyAnswers: key
               })
             })
