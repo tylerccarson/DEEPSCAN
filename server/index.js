@@ -46,7 +46,7 @@ app.post('/api/upload', function (req, res) {
 	  	}
 
 	    var options = {
-	    	mode: 'text',
+	    	mode: 'json',
 	    	pythonPath: __dirname + '/../.env/bin/python2.7',
 	    	pythonOptions: ['-u'],
 	    	scriptPath: __dirname + '/../python/',

@@ -8,6 +8,7 @@ import argparse
 import imutils
 import cv2
 import os
+import json
 
 
 # Load the image, convert it to grayscale, blur it slightly, find edges, and dilate
@@ -200,4 +201,4 @@ for answer in students[student_id]:
     student_answers_single[answer[0]-1]=answer[1]
 
 #print answers
-print students[student_id]
+print json.dumps(students[student_id])
