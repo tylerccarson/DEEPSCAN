@@ -1,12 +1,14 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var PythonShell = require('python-shell');
-var path = require('path');
-var formidable = require('formidable');
-var fs = require('fs');
-var db = require('../database/index.js');
+const express = require('express');
+const bodyParser = require('body-parser');
+const PythonShell = require('python-shell');
+const path = require('path');
+const formidable = require('formidable');
+const fs = require('fs');
+const db = require('../database/index.js');
 
-var app = express();
+const app = express();
+
+const pythonPath = process.env.NODE_ENV ? 'python' : __dirname + '/../.env/bin/python2.7';
 
 app.use(bodyParser.urlencoded({
 	extended: true
@@ -14,7 +16,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/../client/dist'));
 
-var port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
 	console.log('Listening on port ' + port + '...');
 });
@@ -27,7 +29,7 @@ app.listen(port, () => {
 app.post('/api/upload', function (req, res) {
 
 	// create an incoming form object
-	var form = new formidable.IncomingForm();
+	let form = new formidable.IncomingForm();
 
 	// specify that we want to allow the user to upload multiple files in a single request
 	form.multiples = true;
@@ -44,9 +46,9 @@ app.post('/api/upload', function (req, res) {
 	  		console.log(err);
 	  	}
 
-	    var options = {
+	    let options = {
 	    	mode: 'json',
-	    	pythonPath: __dirname + '/../.env/bin/python2.7',
+	    	pythonPath: pythonPath,
 	    	pythonOptions: ['-u'],
 	    	scriptPath: __dirname + '/../python/',
 	    	args: []
