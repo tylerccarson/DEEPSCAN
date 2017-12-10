@@ -6,8 +6,7 @@ if (env === 'development') {
 		useMongoClient: true
 	});
 } else {
-	// eventually add AWS DB (or probably Heroku at first) for cloud storage
-	mongoose.connect('mongodb://admin:password@ds153719.mlab.com:53719/deepscan');
+	mongoose.connect(process.env.MONGODB_URI);
 }
 
 var db = mongoose.connection;
