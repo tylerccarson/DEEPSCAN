@@ -1,5 +1,7 @@
 # Import packages
 from imutils.perspective import four_point_transform
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from imutils import contours
 import random
