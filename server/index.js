@@ -26,6 +26,10 @@ app.listen(port, () => {
 // so-- turn that image processor into its own API; thus, other applications could use it as well.
 
 //routes
+app.get('/*', (req, res) => {
+  res.redirect('/');
+});
+
 app.post('/api/upload', function (req, res) {
 
 	// create an incoming form object
