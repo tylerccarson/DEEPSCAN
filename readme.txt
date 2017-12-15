@@ -28,3 +28,10 @@ Notes for development / user stories:
 
 -a student should be able to download the multiple-choice answer sheet as a .pdf file
 -student should get immediate feedback on their submission, including score, teacher's comments
+
+-if less than 45 questions, make sure to grade appropriately
+-multiple upload to handle 45+ question exams
+
+-mobile ready??
+
+-write-in needs very defined boundary, 10-digit for each quetion
