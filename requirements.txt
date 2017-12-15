@@ -1,7 +1,5 @@
 imutils==0.4.3
 numpy==1.13.
 opencv-python==3.3.0.10
-
-#these two not working perfect? matplot may need to have its dependencies specified... also the virtual env may not be necessary
 scipy==1.0.0
 matplotlib==2.1.0
