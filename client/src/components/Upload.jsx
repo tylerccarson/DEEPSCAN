@@ -166,7 +166,7 @@ class Upload extends React.Component {
       <div>
         <Row>
           <a href="./assets/multiplechoice45question.pdf" download>
-            <Button>Download!</Button>
+            <Button>Download answer sheet</Button>
           </a>
         </Row>
 	  		<Row style={style.form} >
