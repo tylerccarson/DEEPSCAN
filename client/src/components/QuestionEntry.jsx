@@ -12,16 +12,12 @@ class QuestionEntry extends React.Component {
 	}
 
 	handleChange(event) {
-		//use setLetter function to dispatch the action
 		let letter = event.target.value;
-		console.log(letter);
 		let index = this.props.i;
-		console.log(index);
 		this.props.setLetter(letter, index);
 	}
 
 	handleTyping(event) {
-		console.log(event.target.value);
 		this.props.editComments(event.target.value, this.props.i);
 	}
 

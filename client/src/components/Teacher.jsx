@@ -1,8 +1,9 @@
 import React from 'react';
-import { Button, Row, ListGroup, ListGroupItem, Radio, FormGroup, FieldGroup } from 'react-bootstrap';
+import { Button, Row, ListGroup, ListGroupItem, Radio, FormGroup, FieldGroup, ControlLabel, FormControl } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { setQuestions } from '../redux/actionCreators.js';
+import { setNumOfQuestions, setQuestions, setTest, setClassroom } from '../redux/actionCreators.js';
+import PropTypes from 'prop-types';
 
 class Teacher extends React.Component {
   constructor(props) {
@@ -10,44 +11,51 @@ class Teacher extends React.Component {
   	this.state = {
       redirect: false
   	};
+
+    this.handleChangeNumOfQuestions = this.handleChangeNumOfQuestions.bind(this);
+    this.handleChangeTest = this.handleChangeTest.bind(this);
+    this.handleChangeClassroom = this.handleChangeClassroom.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  props: {
-    questions: Array,
-    setQuestions: Function
-  };
+  handleSubmit(event) {
+  	event.preventDefault();
 
-  handleSubmit(e) {
-  	e.preventDefault();
+    //validation
+    if (this.props.numOfQuestions <= 0 || this.props.numOfQuestions > 45) {
+      alert('Number of questions must be greater than 0 and less than 46');
+      return;
+    }
 
-    //should probably turn this whole process into a form, rather than prompts. Save for the Redux migration.
-  	let exam = prompt('Name of exam?');
-  	let subject = prompt('Which subject?');
-    let number = prompt('Id for test?');
-  	
-  	let numOfQuestions = 0;
-  	while (numOfQuestions <= 0 || numOfQuestions > 45) {
-  		numOfQuestions = prompt('How many questions? Please choose more than 0 or greater than 45.');
-  		numOfQuestions = parseInt(numOfQuestions);
-  	}
+    if (this.props.test.length < 8) {
+      alert('Please enter a longer test name');
+      return;
+    }
 
-  	//this could probably be more efficient
-  	let questions = Array.from(Array(numOfQuestions).keys());;
-    questions = questions.map((val, i) => {
-    	return {
-    		letter: 'A',
-    		comments: ''
-    	}
-    });
+    if (this.props.classroom.length < 8) {
+      alert('please enter a longer classroom name');
+      return;
+    }
 
-    //trigger an action to change questions redux state
-    this.props.setQuestions(questions);
+    this.props.setQuestions(this.props.numOfQuestions);
 
     //send to next page to customize the created test
   	this.setState({
   		redirect: true
   	});
 
+  }
+
+  handleChangeNumOfQuestions(event) {
+    this.props.setNumOfQuestions(event.target.value);
+  }
+
+  handleChangeTest(event) {
+    this.props.setTest(event.target.value);
+  }
+
+  handleChangeClassroom(event) {
+    this.props.setClassroom(event.target.value);
   }
 
   render() {
@@ -60,25 +68,71 @@ class Teacher extends React.Component {
 
   	return (
   		<div>
-	  		<Row>
-	  		  <Button
-	          className="submitButton"
-	          type="submit"
-	          onClick={(e)=>this.handleSubmit(e)}
-	        >
-	        Generate New Test
-	        </Button>
-	  		</Row>
-	  		
+        <form onSubmit={this.handleSubmit} >
+          <Row>
+          <FormGroup>
+            <ControlLabel>Test Name: </ControlLabel>
+            <FormControl
+              type="text"
+              value={this.props.test}
+              onChange={this.handleChangeTest}
+            />
+          </FormGroup>
+          </Row>
+          <Row>
+          <FormGroup>
+            <ControlLabel>Classroom Name: </ControlLabel>
+            <FormControl
+              type="text"
+              value={this.props.classroom}
+              onChange={this.handleChangeClassroom}
+            />
+          </FormGroup>
+          </Row>
+          <Row>
+          <FormGroup>
+            <ControlLabel>Number of Questions: </ControlLabel>
+            <FormControl
+              type="text"
+              value={this.props.numOfQuestions}
+              onChange={this.handleChangeNumOfQuestions}
+            />
+          </FormGroup>
+          </Row>
+  	  		<Row>
+  	  		  <Button
+  	          className="submitButton"
+  	          type="submit"
+  	        >
+  	        Generate New Test
+  	        </Button>
+  	  		</Row>	 
+        </form> 		
   		</div>
   	)
   }
 }
 
+Teacher.propTypes = {
+  questions: PropTypes.array,
+  numOfQuestions: PropTypes.string,
+  test: PropTypes.string,
+  classroom: PropTypes.string,
+  setNumOfQuestions: PropTypes.func,
+  setQuestions: PropTypes.func,
+  setTest: PropTypes.func,
+  setClassroom: PropTypes.func
+}
+
 const mapStateToProps = (state) => {
-  return { questions: state.questions };
+  return {
+    questions: state.questions,
+    numOfQuestions: state.numOfQuestions,
+    test: state.test,
+    classroom: state.classroom 
+  };
 };
 
-const mapDispatchToProps = { setQuestions };
+const mapDispatchToProps = { setNumOfQuestions, setQuestions, setTest, setClassroom };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Teacher);
