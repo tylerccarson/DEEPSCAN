@@ -2,8 +2,9 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import LandingPage from './LandingPage.jsx';
 import Upload from './Upload.jsx';
-import AddTest from './AddTest.jsx';
-import { Row, Col } from 'react-bootstrap'
+import Teacher from './Teacher.jsx';
+import CreateTest from './CreateTest.jsx';
+import { Row, Col } from 'react-bootstrap';
 
 class Main extends React.Component {
 
@@ -26,9 +27,15 @@ class Main extends React.Component {
   		    <Route 
   		      path="/teacher"
   		      render={() => (
-  		      	<AddTest />
+  		      	<Teacher />
   		      )}
   		    />
+          <Route
+            path="/createTest"
+            render={() => (
+              <CreateTest />
+            )}
+          />
   		  </Switch>
       </div>
   	)

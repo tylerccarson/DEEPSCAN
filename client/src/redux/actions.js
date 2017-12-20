@@ -1,0 +1,3 @@
+export const SET_QUESTIONS = 'SET_QUESTIONS';
+export const SET_LETTER = 'SET_LETTER';
+export const EDIT_COMMENTS = 'EDIT_COMMENTS';

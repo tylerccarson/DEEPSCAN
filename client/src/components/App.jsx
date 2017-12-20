@@ -1,25 +1,19 @@
 import React from 'react';
 import Header from './Header.jsx';
 import Main from './Main.jsx';
-import { Grid } from 'react-bootstrap'
+import { Grid } from 'react-bootstrap';
+import { Provider } from 'react-redux';
+import store from '../redux/store.js';
 
-class App extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			//TBD... possible implementation of redux
-		}
-	}
-
-	render() {
+const App = () => {
 		return (
-		  <Grid>
-		  	<Header />
-			  <Main />
-      </Grid>
-		)
-	}
-
-}
+			<Provider store={store}>
+			  <Grid>
+			  	<Header />
+				  <Main />
+	      </Grid>
+      </Provider>
+		);
+};
 
 export default App;
