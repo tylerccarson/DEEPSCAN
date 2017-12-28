@@ -27,8 +27,8 @@ class CreateTest extends React.Component {
     })
       .then((res) => {
 
-      	this.props.setNumOfQuestions(0);
-      	this.props.setQuestions(this.props.numOfQuestions);
+      	this.props.setNumOfQuestions('');
+      	this.props.setQuestions('0');
       	this.props.setTest('');
       	this.props.setClassroom('');
 

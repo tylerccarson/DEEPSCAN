@@ -1,6 +1,6 @@
 import { SET_NUM_OF_QUESTIONS, SET_QUESTIONS, SET_LETTER, EDIT_COMMENTS, SET_TEST, SET_CLASSROOM } from './actions';
 
-export function setNumOfQuestions(numberOfQuestions: Number) {
+export function setNumOfQuestions(numberOfQuestions: String) {
   return { type: SET_NUM_OF_QUESTIONS, payload: numberOfQuestions };
 }
 
