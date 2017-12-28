@@ -3,20 +3,37 @@ import { Button, Row, ListGroup, ListGroupItem, Radio, FormGroup, FieldGroup } f
 import { connect } from 'react-redux';
 import QuestionEntry from './QuestionEntry.jsx';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 class CreateTest extends React.Component {
   constructor(props) {
   	super(props);
+  	this.state = {
+  		redirect: false
+  	}
+
+  	this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleSubmit(event) {
   	event.preventDefault();
 
-  	//submit to database, and go back to the home page??
+  	//submit to database via axios call POST request
+
+    //upon successful addition to the DB...
+  	this.setState({
+  		redirect: true
+  	})
   }
 
   render() {
+
+    if (this.state.redirect) {
+      return (
+        <Redirect to="/" />
+      )
+    }
+
   	return (
   		<div>
 	  		<h3>{`Creating ${this.props.test} for ${this.props.classroom}`}</h3>

@@ -21,7 +21,6 @@ class Teacher extends React.Component {
   handleSubmit(event) {
   	event.preventDefault();
 
-    //validation
     if (this.props.numOfQuestions <= 0 || this.props.numOfQuestions > 45) {
       alert('Number of questions must be greater than 0 and less than 46');
       return;
@@ -39,7 +38,6 @@ class Teacher extends React.Component {
 
     this.props.setQuestions(this.props.numOfQuestions);
 
-    //send to next page to customize the created test
   	this.setState({
   		redirect: true
   	});
