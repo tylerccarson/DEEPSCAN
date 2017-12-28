@@ -22,15 +22,29 @@ app.listen(port, () => {
 });
 
 
-// this function would best be factored out into a microservice, running on its own separate server that could then be scaled
-// so-- turn that image processor into its own API; thus, other applications could use it as well.
-
 //routes
 app.get('/*', (req, res) => {
   res.redirect('/');
 });
 
-app.post('/api/upload', function (req, res) {
+app.post('/create/test', (req, res) => {
+	
+  let body = req.body;
+
+  db.Exam.create({
+		test: body.test,
+    classroom: body.classroom,
+		answers: body.answers
+	}, (err, exam) => {
+		if (err) {
+			res.send(err);
+		}
+		res.send(exam);
+	});
+
+});
+
+app.post('/api/upload', (req, res) => {
 
 	// create an incoming form object
 	let form = new formidable.IncomingForm();

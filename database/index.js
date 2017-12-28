@@ -35,7 +35,7 @@ Exam.find({
 	if (!docs.length) {
 		Exam.create({
 			test: 'SAT_Reading_1',
-      classroom: 'SST'
+      classroom: 'SST',
 			answers: [
 		    'B', 'B', 'C', 'A', 'C', 'D', 'D', 'B', 'C', 'B', 'A',
 		    'B', 'D', 'A', 'A', 'C', 'C', 'D', 'A', 'B', 'A', 'B',
@@ -64,7 +64,7 @@ Exam.find({
 	if (!docs.length) {
 		Exam.create({
 			test: 'SAT_Writing_1',
-      classroom: 'SST'
+      classroom: 'SST',
 			answers: [
 				'D', 'B',	'A', 'C',	'C', 'D',	'B', 'C',	'A', 'A',	'B',
 				'B', 'A', 'B', 'C', 'C', 'C', 'A', 'D', 'D', 'B', 'D',
@@ -92,7 +92,7 @@ Exam.find({
 	if (!docs.length) {
 		Exam.create({
 			test: 'SAT_Math_No_Calculator_1',
-      classroom: 'SST'
+      classroom: 'SST',
 			answers: [
 		    'D', 'A', 'C', 'B', 'C', 'A', 'B', 'C', 'B', 'A',
 		    'D', 'D', 'B', 'A', 'D', 2, 1600, 7, 0.8, 100
@@ -118,7 +118,7 @@ Exam.find({
 	if (!docs.length) {
 		Exam.create({
 			test: 'SAT_Math_Calculator_1',
-      classroom: 'SST'
+      classroom: 'SST',
 			answers: [
 		    'B', 'C', 'D', 'C', 'D', 'D', 'C', 'D', 'A', 'B',
 		    'A', 'C', 'C', 'C', 'A', 'C', 'B', 'A', 'B', 'D',
