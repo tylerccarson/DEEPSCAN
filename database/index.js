@@ -33,16 +33,26 @@ Exam.find({
 		return handleError(err);
 	}
 	if (!docs.length) {
+
+		let input = [
+	    'B', 'B', 'C', 'A', 'C', 'D', 'D', 'B', 'C', 'B', 'A',
+	    'B', 'D', 'A', 'A', 'C', 'C', 'D', 'A', 'B', 'A', 'B',
+	    'D', 'D', 'C', 'B', 'D', 'C', 'A', 'A', 'D', 'B', 'A', 
+	    'C', 'B', 'D', 'C', 'C', 'B', 'C', 'B', 'B', 'A', 'A',
+	    'D', 'C', 'B', 'A', 'D', 'B', 'D', 'A'
+	  ];
+
+	  let transformed = input.map((element) => {
+	  	return {
+        letter: element,
+        comments: ''
+      };
+	  });
+
 		Exam.create({
 			test: 'SAT_Reading_1',
       classroom: 'SST',
-			answers: [
-		    'B', 'B', 'C', 'A', 'C', 'D', 'D', 'B', 'C', 'B', 'A',
-		    'B', 'D', 'A', 'A', 'C', 'C', 'D', 'A', 'B', 'A', 'B',
-		    'D', 'D', 'C', 'B', 'D', 'C', 'A', 'A', 'D', 'B', 'A', 
-		    'C', 'B', 'D', 'C', 'C', 'B', 'C', 'B', 'B', 'A', 'A',
-		    'D', 'C', 'B', 'A', 'D', 'B', 'D', 'A'
-		  ]
+			answers: transformed
 		}, (err, exam) => {
 			if (err) {
 				return handleError(err);
@@ -62,15 +72,25 @@ Exam.find({
 		return handleError(err);
 	}
 	if (!docs.length) {
+
+		let input = [
+			'D', 'B',	'A', 'C',	'C', 'D',	'B', 'C',	'A', 'A',	'B',
+			'B', 'A', 'B', 'C', 'C', 'C', 'A', 'D', 'D', 'B', 'D',
+			'D', 'D', 'B', 'A', 'B', 'C', 'B', 'D', 'C', 'A', 'A',
+			'A', 'A', 'B', 'D', 'C', 'A', 'B', 'B', 'C', 'D', 'D'
+	  ];
+
+	  let transformed = input.map((element) => {
+	  	return {
+        letter: element,
+        comments: ''
+      };
+	  });
+
 		Exam.create({
 			test: 'SAT_Writing_1',
       classroom: 'SST',
-			answers: [
-				'D', 'B',	'A', 'C',	'C', 'D',	'B', 'C',	'A', 'A',	'B',
-				'B', 'A', 'B', 'C', 'C', 'C', 'A', 'D', 'D', 'B', 'D',
-				'D', 'D', 'B', 'A', 'B', 'C', 'B', 'D', 'C', 'A', 'A',
-				'A', 'A', 'B', 'D', 'C', 'A', 'B', 'B', 'C', 'D', 'D'
-		  ]
+			answers: transformed
 		}, (err, exam) => {
 			if (err) {
 				return handleError(err);
@@ -90,13 +110,23 @@ Exam.find({
 		return handleError(err);
 	}
 	if (!docs.length) {
+
+		let input = [
+	    'D', 'A', 'C', 'B', 'C', 'A', 'B', 'C', 'B', 'A',
+	    'D', 'D', 'B', 'A', 'D', 2, 1600, 7, 0.8, 100
+	  ];
+
+	  let transformed = input.map((element) => {
+	  	return {
+        letter: element,
+        comments: ''
+      };
+	  });
+
 		Exam.create({
 			test: 'SAT_Math_No_Calculator_1',
       classroom: 'SST',
-			answers: [
-		    'D', 'A', 'C', 'B', 'C', 'A', 'B', 'C', 'B', 'A',
-		    'D', 'D', 'B', 'A', 'D', 2, 1600, 7, 0.8, 100
-		  ]
+			answers: transformed
 		}, (err, exam) => {
 			if (err) {
 				return handleError(err);
@@ -116,15 +146,25 @@ Exam.find({
 		return handleError(err);
 	}
 	if (!docs.length) {
+
+		let input = [
+	    'B', 'C', 'D', 'C', 'D', 'D', 'C', 'D', 'A', 'B',
+	    'A', 'C', 'C', 'C', 'A', 'C', 'B', 'A', 'B', 'D',
+	    'C', 'B', 'B', 'A', 'D', 'B', 'C', 'C', 'D', 'D', 
+	    5, 107, 0.625, 96, 6, 3, 1.02, 6.11
+	  ];
+
+	  let transformed = input.map((element) => {
+	  	return {
+        letter: element,
+        comments: ''
+      };
+	  });
+
 		Exam.create({
 			test: 'SAT_Math_Calculator_1',
       classroom: 'SST',
-			answers: [
-		    'B', 'C', 'D', 'C', 'D', 'D', 'C', 'D', 'A', 'B',
-		    'A', 'C', 'C', 'C', 'A', 'C', 'B', 'A', 'B', 'D',
-		    'C', 'B', 'B', 'A', 'D', 'B', 'C', 'C', 'D', 'D', 
-		    5, 107, 0.625, 96, 6, 3, 1.02, 6.11
-		  ]
+			answers: transformed
 		}, (err, exam) => {
 			if (err) {
 				return handleError(err);

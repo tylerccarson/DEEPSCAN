@@ -24,9 +24,6 @@ class Results extends React.Component {
           return a[0] - b[0];
         });
 
-        console.log(answers);
-
-        //set user answers
         this.props.setUserAnswers(answers);
 
         this.setState({
@@ -64,24 +61,25 @@ class Results extends React.Component {
   		<Row style={style.list}>
         <ListGroup>
 
-          {this.props.answerKey.map((letter, i) => {
+          {this.props.answerKey.map((question, i) => {
 
-			      let score;
+			      let header;
             let entry = i < this.props.userAnswers.length ? this.props.userAnswers[i] : undefined;
 
             if(entry === undefined) {
-              score = `${i + 1}) Missing user input.`;
+              header = `${i + 1}) Missing user input.`;
+            
             } else if (keyMap[entry[1]] === 'invalid') {
-              score = entry[0] + ') Invalid input or deepscan error.';
+              header = entry[0] + ') Invalid input or deepscan error.';
 
-            } else if (keyMap[entry[1]] === this.props.answerKey[i]) {
-			      	score = entry[0] + ') ' + keyMap[entry[1]] + ' is correct.';
+            } else if (keyMap[entry[1]] === this.props.answerKey[i].letter) {
+			      	header = entry[0] + ') ' + keyMap[entry[1]] + ' is correct.';
 
 			      } else {
-			      	score = entry[0] + ') ' + keyMap[entry[1]] + ' is incorrect. The correct answer is ' + this.props.answerKey[i] + '.';
+			      	header = entry[0] + ') ' + keyMap[entry[1]] + ' is incorrect. The correct answer is ' + this.props.answerKey[i].letter + '.';
 			      }
 
-          	return <ListGroupItem key={i} >{score}</ListGroupItem>
+          	return <ListGroupItem key={i} header={header} >{question.comments}</ListGroupItem>
 
           })}
 
