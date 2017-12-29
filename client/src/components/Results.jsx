@@ -26,12 +26,12 @@ class Results extends React.Component {
 
         console.log(answers);
 
+        //set user answers
+        this.props.setUserAnswers(answers);
+
         this.setState({
           loading: false,
         });
-
-        //set user answers
-        this.props.setUserAnswers(answers);
 
       })
       .catch((error) => {
@@ -55,8 +55,6 @@ class Results extends React.Component {
       '4': 'invalid'
     };
 
-    let results = this.state.loading ? <LoadingSpinner /> : '';
-
     if (this.state.loading) {
       return <LoadingSpinner />
     }
@@ -69,9 +67,11 @@ class Results extends React.Component {
           {this.props.answerKey.map((letter, i) => {
 
 			      let score;
-            let entry = this.props.userAnswers[i];
+            let entry = i < this.props.userAnswers.length ? this.props.userAnswers[i] : undefined;
 
-            if (keyMap[entry[1]] === 'invalid') {
+            if(entry === undefined) {
+              score = `${i + 1}) Missing user input.`;
+            } else if (keyMap[entry[1]] === 'invalid') {
               score = entry[0] + ') Invalid input or deepscan error.';
 
             } else if (keyMap[entry[1]] === this.props.answerKey[i]) {

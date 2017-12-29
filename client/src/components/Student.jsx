@@ -16,60 +16,7 @@ class Student extends React.Component {
       redirect: false
   	}
 
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.getClassrooms = this.getClassrooms.bind(this);
-
-  }
-
-  handleSubmit(e) {
-    e.preventDefault();
-    this.handleTouchTap();
-
-    if (this.state.exam !== '' && this.state.version !== '' && this.state.section !== '' && this.state.file !== '') {
-
-      let options = {
-        exam: this.state.exam,
-        version: this.state.version,
-        section: this.state.section
-      }
-
-      let key;
-
-      axios.get('/key', {
-          params: options
-        })
-        .then((res) => {
-          key = res.data;
-
-          this.setState({
-            loading: true,
-            redirect: true
-          });
-
-          //this function must be send to the results page, along with the loading spinner
-          axios.post('/api/upload', this.state.file)
-            .then((res) => {
-
-              //OPTIMIZATION: have this sorted in the python script, not on the front end.
-              let answers = res.data[0].sort((a, b) => {
-                return a[0] - b[0];
-              });
-
-              this.setState({
-                loading: false,
-              	userAnswers: answers,
-                keyAnswers: key
-              })
-            })
-            .catch((error) => {
-              console.log('error', error);
-            });
-        })
-
-    } else {
-      alert('Not all fields have been completed. Try again.');
-    }
-
   }
 
   getClassrooms() {
