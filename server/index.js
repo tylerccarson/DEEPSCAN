@@ -22,9 +22,64 @@ app.listen(port, () => {
 });
 
 
-//routes
-app.get('/*', (req, res) => {
-  res.redirect('/');
+app.get('/classrooms', (req, res) => {
+
+	db.Exam.find({}, 'classroom', (err, docs) => {
+    if (err) {
+    	res.error(err);
+    }
+
+    let classrooms = {};
+
+    for (var i = 0; i < docs.length; i++) {
+
+    	let classroom = docs[i].classroom;
+    	if (classrooms[classroom] === undefined && classroom !== undefined) {
+    		classrooms[classroom] = i;
+    	}
+    }
+
+    classrooms = Object.keys(classrooms);
+
+		res.send(classrooms);
+	});
+
+});
+
+app.get('/tests', (req, res) => {
+
+	db.Exam.find({ classroom: req.query.classroom }, 'test', (err, docs) => {
+    if (err) {
+    	res.error(err);
+    }
+
+    let tests = {};
+
+    for (var i = 0; i < docs.length; i++) {
+
+    	let test = docs[i].test;
+    	if (tests[test] === undefined && test !== undefined) {
+    		tests[test] = i;
+    	}
+    }
+
+    tests = Object.keys(tests);
+
+		res.send(tests);
+	});
+
+});
+
+app.get('/key', (req, res) => {
+
+	db.Exam.find({ test: req.query.test, classroom: req.query.classroom }, 'answers', (err, docs) => {
+    if (err) {
+    	res.error(err);
+    }
+
+		res.send(docs[0].answers);
+	});
+
 });
 
 app.post('/create/test', (req, res) => {
@@ -117,4 +172,9 @@ app.get('/key', (req, res) => {
 		}
 		res.send(docs.answers);
 	});
+});
+
+//routes
+app.get('/*', (req, res) => {
+  res.redirect('/');
 });

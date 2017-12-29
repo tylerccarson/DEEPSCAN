@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { SET_NUM_OF_QUESTIONS, SET_QUESTIONS, SET_LETTER, EDIT_COMMENTS, SET_TEST, SET_CLASSROOM } from './actions.js';
+import { SET_NUM_OF_QUESTIONS, SET_QUESTIONS, SET_LETTER, EDIT_COMMENTS, SET_TEST, SET_CLASSROOM, SET_CLASSROOMS, SET_TESTS, SET_KEY, SET_FILE, SET_USER_ANSWERS } from './actions.js';
 
 const questions = (state = [], action: Action) => {
 	if (action.type === SET_QUESTIONS) {
@@ -56,6 +56,46 @@ const classroom = (state = '', action: Action) => {
   return state;
 }
 
-const rootReducer = combineReducers({ questions, numOfQuestions, test, classroom });
+const file = (state = '', action: Action) => {
+  if (action.type === SET_FILE) {
+    return action.payload;
+  }
+
+  return state;
+}
+
+const classrooms = (state = [], action: Action) => {
+  if (action.type === SET_CLASSROOMS) {
+    return action.payload;
+  }
+
+  return state;
+}
+
+const tests = (state = [], action: Action) => {
+  if (action.type === SET_TESTS) {
+    return action.payload;
+  }
+
+  return state;
+}
+
+const key = (state = [], action: Action) => {
+  if (action.type === SET_KEY) {
+    return action.payload;
+  }
+
+  return state;
+}
+
+const userAnswers = (state = [], action: Action) => {
+  if (action.type === SET_USER_ANSWERS) {
+    return action.payload;
+  }
+
+  return state;
+}
+
+const rootReducer = combineReducers({ questions, numOfQuestions, test, classroom, file, classrooms, tests, key, userAnswers });
 
 export default rootReducer;
