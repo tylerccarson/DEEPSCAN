@@ -202,5 +202,5 @@ student_answers_single=list(np.repeat(5,len(students[student_id])))
 for answer in students[student_id]:
     student_answers_single[answer[0]-1]=answer[1]
 
-#print answers
+#print answers NEED TO ALSO INCLUDE STUDENT_ID, not just the answers
 print json.dumps(students[student_id])
