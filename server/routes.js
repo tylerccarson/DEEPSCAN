@@ -9,85 +9,97 @@ const pythonPath = process.env.NODE_ENV ? 'python' : __dirname + '/../.env/bin/p
 const db = require('../database/index.js');
 const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
+const session = require('express-session');
+const RedisStore = require('connect-redis')(session);
+const redisClient = require('redis').createClient();
 
 passport.use('local-login', new Strategy(
 	function(username, password, callback) {
-		db.User.findOne({username: username})
-			.then(user => {
-				if (!user) {return callback(null, false);}
-				if (user.password !== password) {return callback(null, false);}
-				return callback(null, user);
-			})
-			.catch(err => {
-				return callback(err);
-			});
+		process.nextTick(() => {
+			db.User.findOne({username: username})
+				.then(user => {
+					if (!user) {return callback(null, false);}
+					if (user.password !== password) {return callback(null, false);}
+					return callback(null, user);
+				})
+				.catch(err => {
+					return callback(err);
+				});
+		})
 	}
 ));
 
 passport.use('local-signup', new Strategy(
 	function(username, password, callback) {
-		db.User.findOne({username: username})
-			.then(user => {
-				if (user) {
-					return callback(null, false);
-				} else {
-					db.User.create({username, password})
-						.then(user => {
-							return callback(null, user);
-						})
-						.catch(err => {
-							console.log('Fail to create User: ', err);
-						});
-				}
-			})
-			.catch(err => {
-				console.log('Fail to search for User: ', err);
-			});
+		process.nextTick(() => {
+			db.User.findOne({username: username})
+				.then(user => {
+					if (user) {
+						return callback(null, false);
+					} else {
+						db.User.create({username, password})
+							.then(user => {
+								return callback(null, user);
+							})
+							.catch(err => {
+								console.log('Fail to create User: ', err);
+							});
+					}
+				})
+				.catch(err => {
+					console.log('Fail to search for User: ', err);
+				});
+		});
 	}
 ));
 
-passport.serializeUser(function(user, cb) {
-  cb(null, user.id);
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
 });
 
-passport.deserializeUser(function(id, cb) {
-  db.User.findOne({id: id})
+passport.deserializeUser(function(id, done) {
+  db.User.findById(id)
   	.then(user => {
-  		cb(null, user);
+  		return done(null, user);
   	})
   	.catch(err => {
-  		return cb(err);
+  		done(null, null);
   	})
 });
 
-const checkIsAuthenticated = (req, res, next) => {
-	if (!req.isAuthenticated()) {
-		res.redirect('/login');
+const verify = (req, res, next) => {
+	if (req.isAuthenticated()) {
+		return next();
 	} else {
-		next();
+		res.redirect('/login');
 	}
 };
 
 // Use application-level middleware for common functionality, including
 // logging, parsing, and session handling.
 router.use(require('morgan')('tiny'));
-router.use(require('cookie-parser')());
-router.use(bodyParser.urlencoded({	extended: true }));
+router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
-router.use(require('express-session')({ 
+
+router.use(session({
+	//possibly for deployment, needed for running a cluster
+	// store: new RedisStore({
+ //    client: redisClient,
+ //    host: 'localhost',
+ //    port: 6379
+	// }),
 	secret: 'keyboard cat', 
-	resave: false, 
-	saveUninitialized: false })
-);
+	resave: true, 
+	saveUninitialized: true
+}));
 
 // Initialize Passport and restore authentication state, if any, from the
 // session.
 router.use(passport.initialize());
 router.use(passport.session());
 
-router.get('/', checkIsAuthenticated, (req, res) => {
-	console.log(req.headers);
-	res.send(200);
+router.get('/', verify, (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
 router.get('/login', (req, res) => {
@@ -101,16 +113,12 @@ router.get('/signup', (req, res) => {
 router.post('/login',
 	passport.authenticate('local-login', { failureRedirect: '/login' }),
 	(req, res) => {
-
-    console.log('req.session: ', req.session)
     res.redirect('/');
-
 	});
 
 router.post('/signup',
 	passport.authenticate('local-signup', { failureRedirect: '/signup' }),
 	(req, res) => {
-
 		res.redirect('/');
 	});
 
@@ -118,7 +126,6 @@ router.get('/logout', (req, res) => {
   req.logout();
   res.redirect('/login');
 });
-
 
 router.get('/classrooms', (req, res) => {
 
@@ -138,7 +145,6 @@ router.get('/classrooms', (req, res) => {
     }
 
     classrooms = Object.keys(classrooms);
-
 		res.send(classrooms);
 	});
 
