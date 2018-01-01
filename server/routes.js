@@ -37,12 +37,9 @@ passport.use('local-signup', new Strategy(
 		process.nextTick(() => {
 			db.User.findOne({username: username})
 				.then(user => {
-
 					if (user) {
 						return callback(null, false);
-
 					} else {
-
 						bcrypt.genSalt(10, function(err, salt) {
 							bcrypt.hash(password, salt, function(err, hash) {
 								db.User.create({username: username, password: hash})
@@ -88,7 +85,7 @@ const verify = (req, res, next) => {
 // Use application-level middleware for common functionality, including
 // logging, parsing, and session handling.
 router.use(require('morgan')('tiny'));
-router.use(bodyParser.urlencoded({ extended: false }));
+router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
 router.use(session({
@@ -137,7 +134,9 @@ router.get('/logout', (req, res) => {
   res.redirect('/login');
 });
 
-router.get('/classrooms', (req, res) => {
+router.get('/classrooms', verify, (req, res) => {
+
+	//console.log('session data: ', req.session);
 
 	db.Exam.find({}, 'classroom', (err, docs) => {
     if (err) {
@@ -160,7 +159,7 @@ router.get('/classrooms', (req, res) => {
 
 });
 
-router.get('/tests', (req, res) => {
+router.get('/tests', verify, (req, res) => {
 
 	db.Exam.find({ classroom: req.query.classroom }, 'test', (err, docs) => {
     if (err) {
@@ -184,7 +183,7 @@ router.get('/tests', (req, res) => {
 
 });
 
-router.get('/key', (req, res) => {
+router.get('/key', verify, (req, res) => {
 
 	db.Exam.find({ test: req.query.test, classroom: req.query.classroom }, 'answers', (err, docs) => {
     if (err) {
@@ -196,7 +195,7 @@ router.get('/key', (req, res) => {
 
 });
 
-router.post('/create/test', (req, res) => {
+router.post('/create/test', verify, (req, res) => {
 	
   let body = req.body;
 
@@ -213,7 +212,7 @@ router.post('/create/test', (req, res) => {
 
 });
 
-router.post('/api/upload', (req, res) => {
+router.post('/api/upload', verify, (req, res) => {
 
 	// create an incoming form object
 	let form = new formidable.IncomingForm();
@@ -265,7 +264,7 @@ router.post('/api/upload', (req, res) => {
 
 });
 
-router.get('/key', (req, res) => {
+router.get('/key', verify, (req, res) => {
 	db.Exam.findOne({
     exam: req.query.exam,
     number: req.query.version,
