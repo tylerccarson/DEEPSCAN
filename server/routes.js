@@ -10,6 +10,7 @@ const db = require('../database/index.js');
 const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
 const session = require('express-session');
+const bcrypt = require('bcryptjs');
 const RedisStore = require('connect-redis')(session);
 const redisClient = require('redis').createClient();
 
@@ -19,8 +20,10 @@ passport.use('local-login', new Strategy(
 			db.User.findOne({username: username})
 				.then(user => {
 					if (!user) {return callback(null, false);}
-					if (user.password !== password) {return callback(null, false);}
-					return callback(null, user);
+					bcrypt.compare(password, user.password, function(err, isMatch) {
+						if (err) {return callback(null, false);}
+						if (isMatch) {return callback(null, user);}
+					});
 				})
 				.catch(err => {
 					return callback(err);
@@ -34,16 +37,23 @@ passport.use('local-signup', new Strategy(
 		process.nextTick(() => {
 			db.User.findOne({username: username})
 				.then(user => {
+
 					if (user) {
 						return callback(null, false);
+
 					} else {
-						db.User.create({username, password})
-							.then(user => {
-								return callback(null, user);
+
+						bcrypt.genSalt(10, function(err, salt) {
+							bcrypt.hash(password, salt, function(err, hash) {
+								db.User.create({username: username, password: hash})
+									.then(user => {
+										return callback(null, user);
+									})
+									.catch(err => {
+										console.log('Fail to create User: ', err);
+									});
 							})
-							.catch(err => {
-								console.log('Fail to create User: ', err);
-							});
+						})
 					}
 				})
 				.catch(err => {
