@@ -14,6 +14,10 @@ class LandingPage extends React.Component {
   	this.handleChange = this.handleChange.bind(this);
   }
 
+  componentDidMount() {
+    //fetch user data, used to display past submissions as student role
+  }
+
   submitRole(e) {
   	e.preventDefault();
   	this.setState({

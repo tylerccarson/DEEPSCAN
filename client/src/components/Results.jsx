@@ -20,7 +20,7 @@ class Results extends React.Component {
       .then((res) => {
 
         //OPTIMIZATION: have this sorted in the python script, not on the front end.
-        let answers = res.data[0].sort((a, b) => {
+        let answers = res.data.answers.sort((a, b) => {
           return a[0] - b[0];
         });
 

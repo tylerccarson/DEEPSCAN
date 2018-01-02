@@ -185,7 +185,7 @@ router.get('/tests', verify, (req, res) => {
 
 router.get('/key', verify, (req, res) => {
 
-	db.Exam.find({ test: req.query.test, classroom: req.query.classroom }, 'answers', (err, docs) => {
+	db.Exam.find({ test: req.query.test, classroom: req.query.classroom, type: 'teacher' }, 'answers', (err, docs) => {
     if (err) {
     	res.error(err);
     }
@@ -202,7 +202,10 @@ router.post('/create/test', verify, (req, res) => {
   db.Exam.create({
 		test: body.test,
     classroom: body.classroom,
-		answers: body.answers
+		answers: body.answers,
+		user: req.session.passport.user,
+		type: 'teacher'
+
 	}, (err, exam) => {
 		if (err) {
 			res.send(err);
@@ -214,6 +217,12 @@ router.post('/create/test', verify, (req, res) => {
 
 router.post('/api/upload', verify, (req, res) => {
 
+
+	// let test;
+	// let classroom;
+	// let answers;
+	// let student = req.session.passport.user;
+
 	// create an incoming form object
 	let form = new formidable.IncomingForm();
 
@@ -223,10 +232,15 @@ router.post('/api/upload', verify, (req, res) => {
 	// store all uploads in the /uploads directory
 	form.uploadDir = path.join(__dirname, '/../python/uploads');
 
-	// rename it to input.png
-	form.on('file', function (name, file) {
+	// parse the incoming request containing the form data
+	form.parse(req, function(err, fields, files) {
 
-	  fs.rename(file.path, path.join(form.uploadDir, 'input.jpg'), (err) => {
+		let classroom = fields.Classroom;
+		let test = fields.Test;
+		let student = req.session.passport.user;
+		let file = files.File;
+
+		fs.rename(file.path, path.join(form.uploadDir, 'input.jpg'), (err) => {
 
 	  	if (err) {
 	  		console.log(err);
@@ -244,12 +258,27 @@ router.post('/api/upload', verify, (req, res) => {
 
 	    	if (err) throw err;
 
-	      res.send(results);
+	    	db.Exam.create({
+	    		test: test,
+	    		classroom: classroom,
+	    		answers: results[0],
+	    		user: student,
+	    		type: 'student'
+
+	    	}, (err, exam) => {
+	    		if (err) {
+	    			res.send(err);
+	    		}
+    
+          res.send(exam);
+
+	    	});
 
 	    });
-	  	
-	  });
 
+    });
+
+    if (err) res.send(err);
 
 	});
 
@@ -258,9 +287,6 @@ router.post('/api/upload', verify, (req, res) => {
 		console.log('An error has occured: \n' + err);
 		res.send(err);
 	});
-
-	// parse the incoming request containing the form data
-	form.parse(req);
 
 });
 
@@ -275,6 +301,10 @@ router.get('/key', verify, (req, res) => {
 		}
 		res.send(docs.answers);
 	});
+});
+
+router.get('/*', verify, (req, res) => {
+	res.redirect('/');
 });
 
 module.exports = router;

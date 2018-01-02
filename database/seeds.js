@@ -28,7 +28,8 @@ db.Exam.find({
 		db.Exam.create({
 			test: 'SAT_Reading_1',
       classroom: 'SST',
-			answers: transformed
+			answers: transformed,
+			type: 'teacher'
 		}, (err, exam) => {
 			if (err) {
 				return handleError(err);
@@ -66,7 +67,9 @@ db.Exam.find({
 		db.Exam.create({
 			test: 'SAT_Writing_1',
       classroom: 'SST',
-			answers: transformed
+			answers: transformed,
+			type: 'teacher'
+			
 		}, (err, exam) => {
 			if (err) {
 				return handleError(err);
@@ -102,7 +105,9 @@ db.Exam.find({
 		db.Exam.create({
 			test: 'SAT_Math_No_Calculator_1',
       classroom: 'SST',
-			answers: transformed
+			answers: transformed,
+			type: 'teacher'
+
 		}, (err, exam) => {
 			if (err) {
 				return handleError(err);
@@ -140,7 +145,9 @@ db.Exam.find({
 		db.Exam.create({
 			test: 'SAT_Math_Calculator_1',
       classroom: 'SST',
-			answers: transformed
+			answers: transformed,
+			type: 'teacher'
+
 		}, (err, exam) => {
 			if (err) {
 				return handleError(err);

@@ -19,16 +19,17 @@ db.once('open', function callback() {
 const userSchema = new mongoose.Schema({
 	username: String,
   password: String
-  // classrooms: Array,
-  // tests: Array
 });
 
 const examSchema = new mongoose.Schema({
 	test: String,
   classroom: String,
   answers: Array,
-  //this is new
-  due: Date
+  //for future use:
+  due: Date,
+  //
+  user: String, //corresponds to User._id
+  type: String //'teacher', or 'student' 
 });
 
 const User = mongoose.model('User', userSchema);

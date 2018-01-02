@@ -26,6 +26,8 @@ class SelectFile extends React.Component {
         redirect: true
       });
 
+      //probably better to put the POST request here, and redirect to results afterwards
+
   	} else {
   		alert('Please select a file.');
   	}
@@ -36,6 +38,8 @@ class SelectFile extends React.Component {
 
     let reader = new FormData();
     reader.append('File', event.target.files[0]);
+    reader.append('Classroom', this.props.classroom);
+    reader.append('Test', this.props.test);
 
     this.props.setFile(reader);
 
@@ -72,12 +76,16 @@ class SelectFile extends React.Component {
 }
 
 SelectFile.propTypes = {
-  setFile: PropTypes.func
+  setFile: PropTypes.func,
+  classroom: PropTypes.string,
+  test: PropTypes.string
 }
 
 const mapStateToProps = (state) => {
 	return { 
-		file: state.file
+		file: state.file,
+    classroom: state.classroom,
+    test: state.test
 	};
 };
 

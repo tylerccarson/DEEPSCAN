@@ -50,7 +50,7 @@ class Student extends React.Component {
 
         <Row>
           <Button onClick={this.getClassrooms}>
-            Grade a test
+            Submit an assignment
           </Button>
         </Row>
 
@@ -58,6 +58,9 @@ class Student extends React.Component {
           <a href="./assets/multiplechoice45question.pdf" download>
             <Button>Download an answer sheet</Button>
           </a>
+        </Row>
+
+        <Row>
         </Row>
 
       </div>
