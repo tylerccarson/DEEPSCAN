@@ -4,10 +4,12 @@ import LandingPage from './LandingPage.jsx';
 import Student from './Student.jsx';
 import Teacher from './Teacher.jsx';
 import CreateTest from './CreateTest.jsx';
+import CreateQuestions from './CreateQuestions.jsx';
 import SelectClassroom from './SelectClassroom.jsx';
 import SelectTest from './SelectTest.jsx';
 import SelectFile from './SelectFile.jsx';
 import Results from './Results.jsx';
+import Assignment from './Assignment.jsx';
 import { Row, Col } from 'react-bootstrap';
 
 class Main extends React.Component {
@@ -64,7 +66,18 @@ class Main extends React.Component {
               <CreateTest />
             )}
           />
-
+          <Route
+            path="/createQuestions"
+            render={() => (
+              <CreateQuestions />
+            )}
+          />
+          <Route 
+            path="/assignment"
+            render={() => (
+              <Assignment />
+            )}
+          />
   		  </Switch>
       </div>
   	)

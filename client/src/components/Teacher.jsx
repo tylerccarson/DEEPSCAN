@@ -1,136 +1,115 @@
 import React from 'react';
-import { Button, Row, ListGroup, ListGroupItem, Radio, FormGroup, FieldGroup, ControlLabel, FormControl } from 'react-bootstrap';
-import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
-import { setNumOfQuestions, setQuestions, setTest, setClassroom } from '../redux/actionCreators.js';
+import axios from 'axios';
+import { Form, FormControl, Button, DropdownButton, Panel, MenuItem, Row, Col, ListGroup, ListGroupItem } from 'react-bootstrap';
+import FormData from 'form-data';
+import Results from './Results.jsx';
+import LoadingSpinner from './LoadingSpinner.jsx';
+import { setAssignments, setSubmissions, setTest, setClassroom } from '../redux/actionCreators.js';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { Redirect, Link } from 'react-router-dom';
 
 class Teacher extends React.Component {
   constructor(props) {
   	super(props);
   	this.state = {
       redirect: false
-  	};
+  	}
 
-    this.handleChangeNumOfQuestions = this.handleChangeNumOfQuestions.bind(this);
-    this.handleChangeTest = this.handleChangeTest.bind(this);
-    this.handleChangeClassroom = this.handleChangeClassroom.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.getAssignments = this.getAssignments.bind(this);
+    this.goToAssignment = this.goToAssignment.bind(this);
   }
 
-  handleSubmit(event) {
-  	event.preventDefault();
-
-    if (this.props.numOfQuestions <= 0 || this.props.numOfQuestions > 45) {
-      alert('Number of questions must be greater than 0 and less than 46');
-      return;
-    }
-
-    if (this.props.test.length < 8) {
-      alert('Please enter a longer test name');
-      return;
-    }
-
-    if (this.props.classroom.length < 8) {
-      alert('please enter a longer classroom name');
-      return;
-    }
-
-    this.props.setQuestions(this.props.numOfQuestions);
-
-  	this.setState({
-  		redirect: true
-  	});
-
+  getAssignments() {
+    axios.get('/teacher/assignments')
+      .then((res) => {
+        this.props.setAssignments(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
-  handleChangeNumOfQuestions(event) {
-    this.props.setNumOfQuestions(event.target.value);
+  goToAssignment(index) {
+
+    let test = this.props.assignments[index].test;
+    let classroom = this.props.assignments[index].classroom;
+
+    axios.get('/assignment/submissions', {
+      params: {
+        test: test,
+        classroom: classroom
+      }
+    })
+      .then((res) => {
+
+        this.props.setTest(test);
+        this.props.setClassroom(classroom);
+        this.props.setSubmissions(res.data);
+
+        this.setState({
+          redirect: true
+        });
+
+      });
   }
 
-  handleChangeTest(event) {
-    this.props.setTest(event.target.value);
-  }
-
-  handleChangeClassroom(event) {
-    this.props.setClassroom(event.target.value);
+  componentDidMount() {
+    this.getAssignments();
   }
 
   render() {
 
     if (this.state.redirect) {
       return (
-        <Redirect to="/createTest"/>
+        <Redirect to="/assignment"/>
       )
     }
 
-  	return (
-  		<div>
-        <form onSubmit={this.handleSubmit} >
-          <Row>
-          <FormGroup>
-            <ControlLabel>Test Name: </ControlLabel>
-            <FormControl
-              type="text"
-              value={this.props.test}
-              onChange={this.handleChangeTest}
-            />
-          </FormGroup>
-          </Row>
-          <Row>
-          <FormGroup>
-            <ControlLabel>Classroom Name: </ControlLabel>
-            <FormControl
-              type="text"
-              value={this.props.classroom}
-              onChange={this.handleChangeClassroom}
-            />
-          </FormGroup>
-          </Row>
-          <Row>
-          <FormGroup>
-            <ControlLabel>Number of Questions: </ControlLabel>
-            <FormControl
-              type="text"
-              value={this.props.numOfQuestions}
-              onChange={this.handleChangeNumOfQuestions}
-            />
-          </FormGroup>
-          </Row>
-  	  		<Row>
-  	  		  <Button
-  	          className="submitButton"
-  	          type="submit"
-  	        >
-  	        Generate New Test
-  	        </Button>
-  	  		</Row>	 
-        </form> 		
-  		</div>
-  	)
+    return (
+
+      <div>
+
+        <Row>
+          <Link to="/createTest">
+            <Button>Create a new assignment</Button>
+          </Link>
+        </Row>
+
+        <Row>
+          Teacher Assignments:
+          <ListGroup>
+          {this.props.assignments.map((assignment, i) => {
+            return <ListGroupItem key={i} header={assignment.classroom} onClick={() => this.goToAssignment(i)}>{assignment.test}</ListGroupItem>
+          })}
+          </ListGroup>
+        </Row>
+
+      </div>
+		)
   }
 }
 
 Teacher.propTypes = {
-  questions: PropTypes.array,
-  numOfQuestions: PropTypes.string,
-  test: PropTypes.string,
-  classroom: PropTypes.string,
-  setNumOfQuestions: PropTypes.func,
-  setQuestions: PropTypes.func,
+  assignments: PropTypes.array,
+  setAssignments: PropTypes.func,
+  setSubmissions: PropTypes.func,
+  submissions: PropTypes.array,
   setTest: PropTypes.func,
-  setClassroom: PropTypes.func
+  setClassroom: PropTypes.func,
+  test: PropTypes.string,
+  classroom: PropTypes.string
 }
 
 const mapStateToProps = (state) => {
-  return {
-    questions: state.questions,
-    numOfQuestions: state.numOfQuestions,
+  return { 
+    assignments: state.assignments,
+    submissions: state.submissions,
     test: state.test,
-    classroom: state.classroom 
+    classroom: state.classroom
   };
 };
 
-const mapDispatchToProps = { setNumOfQuestions, setQuestions, setTest, setClassroom };
+const mapDispatchToProps = { setAssignments, setSubmissions, setTest, setClassroom };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Teacher);

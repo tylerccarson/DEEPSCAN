@@ -1,4 +1,4 @@
-import { SET_NUM_OF_QUESTIONS, SET_QUESTIONS, SET_LETTER, EDIT_COMMENTS, SET_TEST, SET_CLASSROOM, SET_CLASSROOMS, SET_TESTS, SET_KEY, SET_FILE, SET_USER_ANSWERS, SET_SUBMISSIONS } from './actions';
+import { SET_NUM_OF_QUESTIONS, SET_QUESTIONS, SET_LETTER, EDIT_COMMENTS, SET_TEST, SET_CLASSROOM, SET_CLASSROOMS, SET_TESTS, SET_KEY, SET_FILE, SET_USER_ANSWERS, SET_SUBMISSIONS, SET_ASSIGNMENTS } from './actions';
 
 export function setNumOfQuestions(numberOfQuestions: String) {
   return { type: SET_NUM_OF_QUESTIONS, payload: numberOfQuestions };
@@ -46,4 +46,8 @@ export function setUserAnswers(answers: Array) {
 
 export function setSubmissions(submissions: Array) {
 	return { type: SET_SUBMISSIONS, payload: submissions };
+}
+
+export function setAssignments(assignments: Array) {
+	return { type: SET_ASSIGNMENTS, payload: assignments };
 }

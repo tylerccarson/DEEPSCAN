@@ -1,79 +1,111 @@
 import React from 'react';
-import axios from 'axios';
-import { Button, Row, ListGroup, ListGroupItem, Radio, FormGroup, FieldGroup } from 'react-bootstrap';
+import { Button, Row, ListGroup, ListGroupItem, Radio, FormGroup, FieldGroup, ControlLabel, FormControl } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import QuestionEntry from './QuestionEntry.jsx';
-import PropTypes from 'prop-types';
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { setNumOfQuestions, setQuestions, setTest, setClassroom } from '../redux/actionCreators.js';
+import PropTypes from 'prop-types';
 
 class CreateTest extends React.Component {
   constructor(props) {
   	super(props);
   	this.state = {
-  		redirect: false
-  	}
+      redirect: false
+  	};
 
-  	this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChangeNumOfQuestions = this.handleChangeNumOfQuestions.bind(this);
+    this.handleChangeTest = this.handleChangeTest.bind(this);
+    this.handleChangeClassroom = this.handleChangeClassroom.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleSubmit(event) {
   	event.preventDefault();
 
-    axios.post('/create/test', {
-    	test: this.props.test,
-    	classroom: this.props.classroom,
-    	answers: this.props.questions
-    })
-      .then((res) => {
+    if (this.props.numOfQuestions <= 0 || this.props.numOfQuestions > 45) {
+      alert('Number of questions must be greater than 0 and less than 46');
+      return;
+    }
 
-      	this.props.setNumOfQuestions('');
-      	this.props.setQuestions('0');
-      	this.props.setTest('');
-      	this.props.setClassroom('');
+    if (this.props.test.length < 8) {
+      alert('Please enter a longer test name');
+      return;
+    }
 
-      	alert('Test has been submitted!');
+    if (this.props.classroom.length < 8) {
+      alert('please enter a longer classroom name');
+      return;
+    }
 
-		  	this.setState({
-		  		redirect: true
-		  	});
-		  	
-      })
-      .catch((err) => {
-      	console.log(err);
-      });
+    this.props.setQuestions(this.props.numOfQuestions);
+
+  	this.setState({
+  		redirect: true
+  	});
+
+  }
+
+  handleChangeNumOfQuestions(event) {
+    this.props.setNumOfQuestions(event.target.value);
+  }
+
+  handleChangeTest(event) {
+    this.props.setTest(event.target.value);
+  }
+
+  handleChangeClassroom(event) {
+    this.props.setClassroom(event.target.value);
   }
 
   render() {
 
     if (this.state.redirect) {
       return (
-        <Redirect to="/" />
+        <Redirect to="/createQuestions"/>
       )
     }
 
   	return (
   		<div>
-	  		<h3>{`Creating ${this.props.test} for ${this.props.classroom}`}</h3>
-	  		<Row>
-	  		  <Link to="/teacher">
-		  		  <Button>
-		  		    Go Back
-		  		  </Button>
-	  		  </Link>
-	  		  <Button onClick={this.handleSubmit} >
-	  		    Submit Test
-	  		  </Button>
-	  		</Row>
-	  		<Row>
-		  		<ListGroup>
-		  		  <form>
-			  		  {this.props.questions.map((question, i) => {
-			  		  	return <QuestionEntry key={i} i={i} question={question} />
-				  		  })} 
-		  		  </form>			  		
-		  		</ListGroup>
-	  		</Row>
+        <form onSubmit={this.handleSubmit} >
+          <Row>
+          <FormGroup>
+            <ControlLabel>Test Name: </ControlLabel>
+            <FormControl
+              type="text"
+              value={this.props.test}
+              onChange={this.handleChangeTest}
+            />
+          </FormGroup>
+          </Row>
+          <Row>
+          <FormGroup>
+            <ControlLabel>Classroom Name: </ControlLabel>
+            <FormControl
+              type="text"
+              value={this.props.classroom}
+              onChange={this.handleChangeClassroom}
+            />
+          </FormGroup>
+          </Row>
+          <Row>
+          <FormGroup>
+            <ControlLabel>Number of Questions: </ControlLabel>
+            <FormControl
+              type="text"
+              value={this.props.numOfQuestions}
+              onChange={this.handleChangeNumOfQuestions}
+            />
+          </FormGroup>
+          </Row>
+  	  		<Row>
+  	  		  <Button
+  	          className="submitButton"
+  	          type="submit"
+  	        >
+  	        Generate Questions
+  	        </Button>
+  	  		</Row>	 
+        </form> 		
   		</div>
   	)
   }
@@ -91,12 +123,12 @@ CreateTest.propTypes = {
 }
 
 const mapStateToProps = (state) => {
-	return { 
-		questions: state.questions,
-		test: state.test,
-		classroom: state.classroom,
-		numOfQuestions: state.numOfQuestions
-	};
+  return {
+    questions: state.questions,
+    numOfQuestions: state.numOfQuestions,
+    test: state.test,
+    classroom: state.classroom 
+  };
 };
 
 const mapDispatchToProps = { setNumOfQuestions, setQuestions, setTest, setClassroom };

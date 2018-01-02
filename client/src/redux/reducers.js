@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { SET_NUM_OF_QUESTIONS, SET_QUESTIONS, SET_LETTER, EDIT_COMMENTS, SET_TEST, SET_CLASSROOM, SET_CLASSROOMS, SET_TESTS, SET_KEY, SET_FILE, SET_USER_ANSWERS, SET_SUBMISSIONS } from './actions.js';
+import { SET_NUM_OF_QUESTIONS, SET_QUESTIONS, SET_LETTER, EDIT_COMMENTS, SET_TEST, SET_CLASSROOM, SET_CLASSROOMS, SET_TESTS, SET_KEY, SET_FILE, SET_USER_ANSWERS, SET_SUBMISSIONS, SET_ASSIGNMENTS } from './actions.js';
 
 const questions = (state = [], action: Action) => {
 	if (action.type === SET_QUESTIONS) {
@@ -104,6 +104,16 @@ const submissions = (state = [], action: Action) => {
   return state;
 }
 
-const rootReducer = combineReducers({ questions, numOfQuestions, test, classroom, file, classrooms, tests, key, userAnswers, submissions });
+const assignments = (state = [], action: Action) => {
+  if (action.type === SET_ASSIGNMENTS) {
+    return action.payload;
+  }
+
+  return state;
+}
+
+
+
+const rootReducer = combineReducers({ questions, numOfQuestions, test, classroom, file, classrooms, tests, key, userAnswers, submissions, assignments });
 
 export default rootReducer;
