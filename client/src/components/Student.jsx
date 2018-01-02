@@ -1,10 +1,10 @@
 import React from 'react';
 import axios from 'axios';
-import { Form, FormControl, Button, DropdownButton, Panel, MenuItem, Row, Col } from 'react-bootstrap';
+import { Form, FormControl, Button, DropdownButton, Panel, MenuItem, Row, Col, ListGroup, ListGroupItem } from 'react-bootstrap';
 import FormData from 'form-data';
 import Results from './Results.jsx';
 import LoadingSpinner from './LoadingSpinner.jsx';
-import { setClassrooms, setSubmissions } from '../redux/actionCreators.js';
+import { setClassrooms, setSubmissions, setKey, setUserAnswers } from '../redux/actionCreators.js';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
@@ -13,11 +13,13 @@ class Student extends React.Component {
   constructor(props) {
   	super(props);
   	this.state = {
-      redirect: false
+      redirect: false,
+      to: ''
   	}
 
     this.getClassrooms = this.getClassrooms.bind(this);
     this.getSubmissions = this.getSubmissions.bind(this);
+    this.goToTest = this.goToTest.bind(this);
   }
 
   getClassrooms() {
@@ -36,10 +38,37 @@ class Student extends React.Component {
   getSubmissions() {
     axios.get('/student/submissions')
       .then((res) => {
-        console.log(res);
-
-        //call action to set submissions prop, an array, which will rerender accordingly
         this.props.setSubmissions(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  goToTest(index) {
+
+    let classroom = this.props.submissions[index].classroom;
+    let test = this.props.submissions[index].test;
+
+    axios.get('/key', {
+      params: {
+        classroom: classroom,
+        test: test
+      }
+    })
+      .then((res) => {
+        this.props.setKey(res.data);
+
+        let answers = this.props.submissions[index].answers.sort((a, b) => {
+          return a[0] - b[0];
+        });
+
+        this.props.setUserAnswers(answers);
+
+        this.setState({
+          redirect: true,
+          to: 'goToTest'
+        });
 
       })
       .catch((err) => {
@@ -57,9 +86,14 @@ class Student extends React.Component {
   		form: {}
   	}
 
-    if (this.state.redirect) {
+    if (this.state.redirect && this.state.to === '') {
       return (
         <Redirect to="/selectClassroom"/>
+      )
+
+    } else if (this.state.redirect && this.state.to === 'goToTest') {
+      return (
+        <Redirect to="/results"/>
       )
     }
 
@@ -80,10 +114,12 @@ class Student extends React.Component {
         </Row>
 
         <Row>
-          Submissions:
+          User Submissions:
+          <ListGroup>
           {this.props.submissions.map((submission, i) => {
-            return <div key={i}>{submission.test}</div>
+            return <ListGroupItem key={i} header={submission.classroom} onClick={() => this.goToTest(i)}>{submission.test}</ListGroupItem>
           })}
+          </ListGroup>
         </Row>
 
       </div>
@@ -95,7 +131,9 @@ Student.propTypes = {
   classrooms: PropTypes.array,
   setClassrooms: PropTypes.func,
   setSubmissions: PropTypes.func,
-  submissions: PropTypes.array
+  submissions: PropTypes.array,
+  setKey: PropTypes.func,
+  setUserAnswers: PropTypes.func
 }
 
 const mapStateToProps = (state) => {
@@ -105,6 +143,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = { setClassrooms, setSubmissions };
+const mapDispatchToProps = { setClassrooms, setSubmissions, setUserAnswers, setKey };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Student);
