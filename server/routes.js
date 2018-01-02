@@ -303,6 +303,45 @@ router.get('/key', verify, (req, res) => {
 	});
 });
 
+router.get('/student/submissions', verify, (req, res) => {
+
+  let user = req.session.passport.user;
+  
+  db.Exam.find({ 
+  	user: user,
+  	type: 'student'
+
+  }, (err, docs) => {
+  	if (err) {
+  		res.error(err);
+  	}
+
+  	res.send(docs);
+
+  });
+
+ //  	db.Exam.find({ classroom: req.query.classroom }, 'test', (err, docs) => {
+ //    if (err) {
+ //    	res.error(err);
+ //    }
+
+ //    let tests = {};
+
+ //    for (var i = 0; i < docs.length; i++) {
+
+ //    	let test = docs[i].test;
+ //    	if (tests[test] === undefined && test !== undefined) {
+ //    		tests[test] = i;
+ //    	}
+ //    }
+
+ //    tests = Object.keys(tests);
+
+	// 	res.send(tests);
+	// });
+
+});
+
 router.get('/*', verify, (req, res) => {
 	res.redirect('/');
 });

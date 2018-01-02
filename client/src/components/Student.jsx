@@ -4,7 +4,7 @@ import { Form, FormControl, Button, DropdownButton, Panel, MenuItem, Row, Col } 
 import FormData from 'form-data';
 import Results from './Results.jsx';
 import LoadingSpinner from './LoadingSpinner.jsx';
-import { setClassrooms } from '../redux/actionCreators.js';
+import { setClassrooms, setSubmissions } from '../redux/actionCreators.js';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
@@ -17,6 +17,7 @@ class Student extends React.Component {
   	}
 
     this.getClassrooms = this.getClassrooms.bind(this);
+    this.getSubmissions = this.getSubmissions.bind(this);
   }
 
   getClassrooms() {
@@ -30,6 +31,24 @@ class Student extends React.Component {
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  getSubmissions() {
+    axios.get('/student/submissions')
+      .then((res) => {
+        console.log(res);
+
+        //call action to set submissions prop, an array, which will rerender accordingly
+        this.props.setSubmissions(res.data);
+
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  componentDidMount() {
+    this.getSubmissions();
   }
 
   render() {
@@ -61,6 +80,10 @@ class Student extends React.Component {
         </Row>
 
         <Row>
+          Submissions:
+          {this.props.submissions.map((submission, i) => {
+            return <div key={i}>{submission.test}</div>
+          })}
         </Row>
 
       </div>
@@ -70,15 +93,18 @@ class Student extends React.Component {
 
 Student.propTypes = {
   classrooms: PropTypes.array,
-  setClassrooms: PropTypes.func
+  setClassrooms: PropTypes.func,
+  setSubmissions: PropTypes.func,
+  submissions: PropTypes.array
 }
 
 const mapStateToProps = (state) => {
   return { 
-    classrooms: state.classrooms
+    classrooms: state.classrooms,
+    submissions: state.submissions
   };
 };
 
-const mapDispatchToProps = { setClassrooms };
+const mapDispatchToProps = { setClassrooms, setSubmissions };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Student);

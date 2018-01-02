@@ -9,3 +9,4 @@ export const SET_TESTS = 'SET_TESTS';
 export const SET_KEY = 'SET_KEY';
 export const SET_FILE = 'SET_FILE';
 export const SET_USER_ANSWERS = 'SET_USER_ANSWERS';
+export const SET_SUBMISSIONS = 'SET_SUBMISSIONS';
