@@ -1,39 +1,13 @@
 import React from 'react';
 import { ListGroup, ListGroupItem, Row } from 'react-bootstrap';
-import LoadingSpinner from './LoadingSpinner.jsx';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { setUserAnswers } from '../redux/actionCreators.js';
 
 class Results extends React.Component {
   constructor(props) {
   	super(props);
-    this.state = {
-      loading: true
-    }
-  }
-
-  componentDidMount() {
-    axios.post('/api/upload', this.props.file)
-      .then((res) => {
-
-        //OPTIMIZATION: have this sorted in the python script, not on the front end.
-        let answers = res.data.answers.sort((a, b) => {
-          return a[0] - b[0];
-        });
-
-        this.props.setUserAnswers(answers);
-
-        this.setState({
-          loading: false,
-        });
-
-      })
-      .catch((error) => {
-        console.log('error', error);
-      });
   }
 
   render() {
@@ -51,10 +25,6 @@ class Results extends React.Component {
       '3': 'D',
       '4': 'invalid'
     };
-
-    if (this.state.loading) {
-      return <LoadingSpinner />
-    }
     
     return (
 
@@ -93,7 +63,6 @@ class Results extends React.Component {
 
 Results.propTypes = {
   test: PropTypes.string,
-  setUserAnswers: PropTypes.func,
   classroom: PropTypes.string,
   answerKey: PropTypes.array,
   userAnswers: PropTypes.array
@@ -109,6 +78,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = { setUserAnswers };
-
-export default connect(mapStateToProps, mapDispatchToProps)(Results);
+export default connect(mapStateToProps)(Results);
