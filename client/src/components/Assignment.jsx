@@ -14,7 +14,10 @@ class Assignment extends React.Component {
         All Student Submissions for: {this.props.classroom} {this.props.test}
         <ListGroup>
         {this.props.submissions.map((submission, i) => {
-          return <ListGroupItem key={i}>{submission.user.username}</ListGroupItem>
+
+        	let date = new Date(submission.updated).toLocaleString('en-US', { hour12: true });
+
+          return <ListGroupItem key={i}>{submission.user.username} submitted: {date}</ListGroupItem>
         })}
         </ListGroup>
       </Row>

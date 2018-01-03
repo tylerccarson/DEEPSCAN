@@ -117,7 +117,10 @@ class Student extends React.Component {
           User Submissions:
           <ListGroup>
           {this.props.submissions.map((submission, i) => {
-            return <ListGroupItem key={i} header={submission.classroom} onClick={() => this.goToTest(i)}>{submission.test}</ListGroupItem>
+
+            let date = new Date(submission.updated).toLocaleString('en-US', { hour12: true });
+
+            return <ListGroupItem key={i} header={submission.classroom} onClick={() => this.goToTest(i)}>{submission.test} submitted {date}</ListGroupItem>
           })}
           </ListGroup>
         </Row>

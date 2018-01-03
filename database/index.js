@@ -26,9 +26,10 @@ const examSchema = new mongoose.Schema({
 	test: String,
   classroom: String,
   answers: Array,
+  score: Number, //String???
   //for future use:
-  due: Date,
-  createdAt: Date,
+  dueDate: Date,
+  updated: { type: Date, default: Date.now },
   //
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   type: String //'teacher', or 'student' 
