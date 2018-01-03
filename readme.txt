@@ -17,10 +17,11 @@ for reference regarding python dependecies:
 
 Notes for development / user stories:
 
--enable authentication for teacher and student roles
 -ability to view past submissions as a student
--ability to see all submissions, one per student, for each particular student in each classroom
+-ability to see all submissions, one per student, for each particular student (by classID) in each classroom
 -teacher can view all submissions for a particular exam and be able to identify student by their ID
+-able to set a latest submission time or due date for an assignment
+-score students and display with graphs
 
 -multiple upload to handle 45+ question exams
 

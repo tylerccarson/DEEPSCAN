@@ -3,15 +3,17 @@ import { DropdownButton, MenuItem, Panel, Button, Row, FormControl } from 'react
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { setFile } from '../redux/actionCreators.js';
+import { setFile, setUserAnswers } from '../redux/actionCreators.js';
 import axios from 'axios';
+import LoadingSpinner from './LoadingSpinner.jsx';
 
 class SelectFile extends React.Component {
   constructor(props) {
   	super(props);
   	this.state = {
   		redirect: false,
-      open: false
+      open: false,
+      loading: false
   	};
 
   	this.handleSubmit = this.handleSubmit.bind(this);
@@ -22,8 +24,28 @@ class SelectFile extends React.Component {
     event.preventDefault()
 
   	if (this.props.file !== '') {
+
       this.setState({
-        redirect: true
+        loading: true
+      });
+
+      axios.post('/api/upload', this.props.file)
+      .then((res) => {
+
+        //OPTIMIZATION: have this sorted in the python script, not on the front end.
+        let answers = res.data.answers.sort((a, b) => {
+          return a[0] - b[0];
+        });
+
+        this.props.setUserAnswers(answers);
+
+        this.setState({
+          redirect: true,
+        });
+
+      })
+      .catch((error) => {
+        console.log('error', error);
       });
 
   	} else {
@@ -36,6 +58,8 @@ class SelectFile extends React.Component {
 
     let reader = new FormData();
     reader.append('File', event.target.files[0]);
+    reader.append('Classroom', this.props.classroom);
+    reader.append('Test', this.props.test);
 
     this.props.setFile(reader);
 
@@ -47,6 +71,10 @@ class SelectFile extends React.Component {
       return (
         <Redirect to="/results"/>
       )
+    }
+
+    if (this.state.loading) {
+      return <LoadingSpinner />
     }
 
   	return (
@@ -72,15 +100,20 @@ class SelectFile extends React.Component {
 }
 
 SelectFile.propTypes = {
-  setFile: PropTypes.func
+  setFile: PropTypes.func,
+  classroom: PropTypes.string,
+  test: PropTypes.string,
+  setUserAnswers: PropTypes.func
 }
 
 const mapStateToProps = (state) => {
 	return { 
-		file: state.file
+		file: state.file,
+    classroom: state.classroom,
+    test: state.test
 	};
 };
 
-const mapDispatchToProps = { setFile };
+const mapDispatchToProps = { setFile, setUserAnswers };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectFile);
