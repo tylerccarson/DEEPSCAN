@@ -4,25 +4,35 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 class Assignment extends React.Component {
-	constructor(props) {
-		super(props);
-	}
+  constructor(props) {
+    super(props);
+  }
 
-	render() {
-		return (
-			<Row>
-        All Student Submissions for: {this.props.classroom} {this.props.test}
-        <ListGroup>
-        {this.props.submissions.map((submission, i) => {
+  render() {
+    return (
+      <div>
 
-        	let date = new Date(submission.updated).toLocaleString('en-US', { hour12: true });
+        <Row>
+          <Link to="/teacher">
+            <Button>Back to other assignments</Button>
+          </Link>
+        </Row>
 
-          return <ListGroupItem key={i}>{submission.user.username} submitted: {date}</ListGroupItem>
-        })}
-        </ListGroup>
-      </Row>
-		)
-	}
+        <Row>
+          All Student Submissions for: {this.props.classroom} {this.props.test}
+          <ListGroup>
+          {this.props.submissions.map((submission, i) => {
+
+            let date = new Date(submission.updated).toLocaleString('en-US', { hour12: true });
+
+            return <ListGroupItem key={i}>{submission.user.username} submitted: {date}</ListGroupItem>
+          })}
+          </ListGroup>
+        </Row>
+
+      </div>
+    )
+  }
 }
 
 Assignment.propTypes = {
@@ -33,7 +43,7 @@ Assignment.propTypes = {
 
 const mapStateToProps = (state) => {
   return { 
-  	classroom: state.classroom,
+    classroom: state.classroom,
     test: state.test,
     submissions: state.submissions
   };

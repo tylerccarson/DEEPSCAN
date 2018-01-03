@@ -11,10 +11,10 @@ import { Redirect, Link } from 'react-router-dom';
 
 class Teacher extends React.Component {
   constructor(props) {
-  	super(props);
-  	this.state = {
+    super(props);
+    this.state = {
       redirect: false
-  	}
+    }
 
     this.getAssignments = this.getAssignments.bind(this);
     this.goToAssignment = this.goToAssignment.bind(this);
@@ -60,6 +60,12 @@ class Teacher extends React.Component {
 
   render() {
 
+    const style = {
+      button: {
+        margin: '5px'
+      }
+    }
+
     if (this.state.redirect) {
       return (
         <Redirect to="/assignment"/>
@@ -71,22 +77,34 @@ class Teacher extends React.Component {
       <div>
 
         <Row>
-          <Link to="/createTest">
-            <Button>Create a new assignment</Button>
-          </Link>
+
+          <Col sm={12} md={6}>
+            <Link to="/createTest">
+              <Button style={style.button}>Create a new assignment</Button>
+            </Link>
+
+            <Link to="/student">
+              <Button style={style.button}>Switch to student role</Button>
+            </Link>
+          </Col>
+
         </Row>
 
         <Row>
-          Teacher Assignments:
-          <ListGroup>
-          {this.props.assignments.map((assignment, i) => {
-            return <ListGroupItem key={i} header={assignment.classroom} onClick={() => this.goToAssignment(i)}>{assignment.test}</ListGroupItem>
-          })}
-          </ListGroup>
+
+          <Col sm={12} md={6}>
+            <h3>Teacher Assignments:</h3>
+            <ListGroup>
+            {this.props.assignments.map((assignment, i) => {
+              return <ListGroupItem key={i} header={assignment.classroom} onClick={() => this.goToAssignment(i)}>{assignment.test}</ListGroupItem>
+            })}
+            </ListGroup>
+          </Col>
+
         </Row>
 
       </div>
-		)
+    )
   }
 }
 

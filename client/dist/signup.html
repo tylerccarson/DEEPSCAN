@@ -1,25 +1,40 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>DEEPSCAN login</title>
-  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel="icon" href="./assets/favicon.ico">
-</head>
-<body>
-  <form action="/signup" method="POST">
-    <div>
-      <label>Username:</label>
-      <input type="text" name="username"/>
-    </div>
-    <div>
-      <label>Password:</label>
-      <input type="password" name="password"/>
-    </div>
-    <div>
-      <input type="submit" value="Sign Up"/>
-    </div>
-  </form>
-  <form action="/login" method="GET">
-      <input type="submit" value="I already have an account" name="Submit" />
-  </form>
-</body>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="./assets/favicon.ico">
+
+    <title>DEEPSCAN Signup</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- Custom styles for this template -->
+    <link href="./css/signin.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <form action="/signup" method="POST" class="form-signin">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <label for="inputUsername" class="sr-only">Username</label>
+        <input type="text" name="username" id="inputEmail" class="form-control" placeholder="Username" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+ 
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+
+      <form action="/login" method="GET" class="form-signup">
+        <button class="btn btn-lg btn-primary btn-block" type="submit" >I already have an account</button>
+      </form>
+
+    </div> <!-- /container -->
+
+  </body>
+</html>

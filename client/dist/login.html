@@ -1,28 +1,40 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>DEEPSCAN login</title>
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
     <link rel="icon" href="./assets/favicon.ico">
-</head>
-<body>
-  <form action="/login" method="post">
-    <div>
-      <label>Username:</label>
-      <input type="text" name="username"/>
-    </div>
-    <div>
-      <label>Password:</label>
-      <input type="password" name="password"/>
-    </div>
-    <div>
-      <input type="submit" value="Log In"/>
-    </div>
-  </form>
-  <form action="/signup" method="GET">
-    <input type="submit" value="I don't have an account yet" name="Submit" />
-  </form>
-</body>
 
+    <title>DEEPSCAN Login</title>
 
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
+    <!-- Custom styles for this template -->
+    <link href="./css/signin.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <form action="/login" method="POST" class="form-signin">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <label for="inputUsername" class="sr-only">Username</label>
+        <input type="text" name="username" id="inputEmail" class="form-control" placeholder="Username" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+ 
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+
+      <form action="/signup" method="GET" class="form-signup">
+        <button class="btn btn-lg btn-primary btn-block" type="submit" >No account yet?</button>
+      </form>
+
+    </div> <!-- /container -->
+
+  </body>
+</html>

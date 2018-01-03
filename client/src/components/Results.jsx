@@ -7,16 +7,16 @@ import { Link } from 'react-router-dom';
 
 class Results extends React.Component {
   constructor(props) {
-  	super(props);
+    super(props);
   }
 
   render() {
 
-  	const style = {
+    const style = {
       list: {
-      	//width: '50%'
+        //width: '50%'
       }
-  	};
+    };
 
     const keyMap = {
       '0': 'A',
@@ -35,12 +35,12 @@ class Results extends React.Component {
           </Link>
         </Row>
 
-    		<Row style={style.list}>
+        <Row style={style.list}>
           <ListGroup>
 
             {this.props.answerKey.map((question, i) => {
 
-  			      let header;
+              let header;
               let entry = i < this.props.userAnswers.length ? this.props.userAnswers[i] : undefined;
 
               if(entry === undefined) {
@@ -50,21 +50,21 @@ class Results extends React.Component {
                 header = entry[0] + ') Invalid input or deepscan error.';
 
               } else if (keyMap[entry[1]] === this.props.answerKey[i].letter) {
-  			      	header = entry[0] + ') ' + keyMap[entry[1]] + ' is correct.';
+                header = entry[0] + ') ' + keyMap[entry[1]] + ' is correct.';
 
-  			      } else {
-  			      	header = entry[0] + ') ' + keyMap[entry[1]] + ' is incorrect. The correct answer is ' + this.props.answerKey[i].letter + '.';
-  			      }
+              } else {
+                header = entry[0] + ') ' + keyMap[entry[1]] + ' is incorrect. The correct answer is ' + this.props.answerKey[i].letter + '.';
+              }
 
-            	return <ListGroupItem key={i} header={header} >{question.comments}</ListGroupItem>
+              return <ListGroupItem key={i} header={header} >{question.comments}</ListGroupItem>
 
             })}
 
           </ListGroup>
-    		</Row>
+        </Row>
 
       </div>
-  	)
+    )
   }
 
 }

@@ -1,32 +1,44 @@
 import React from 'react';
-import { Row, Col } from 'react-bootstrap'
+import { Row, Col, Button } from 'react-bootstrap'
 
 class Header extends React.Component {
   render() {
 
     const style = {
     	title: {
-    		color: 'darkBlue'
-    	}
+    		color: 'darkBlue',
+        textAlign: 'center'
+    	},
+      subtitle: {
+        textAlign: 'center'
+      },
+      logout: {
+        textAlign: 'right',
+        margin: '5px'
+      }
     };
 
   	return (
   		<div>
-	  		<Row>
-		  	  <Col md={6} sm={6} xsHidden >
-			  		<h2 style={style.title} >WELCOME TO DEEPSCAN</h2>
-			  	</Col>
+
+        <Row>
+			  	<Col md={12} sm={12} style={style.logout}>
+            <Button href="/logout">Log Out</Button>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col md={12} sm={12} style={style.title}>
+            <h2>WELCOME TO DEEPSCAN</h2>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col md={12} sm={12} style={style.subtitle}>
+            <h4>Make testing free with this futuristic Scantron Web App</h4>
+          </Col>
 			  </Row>
-			  <Row>
-			    <Col md={6} sm={6} xsHidden >
-			  	  <h4>Make testing free with this futuristic Scantron Web App</h4>
-			  	</Col>
-			  	<Col md={6} sm={6} >
-			  	  <form action="/logout" method="GET">
-					    <input type="submit" value="Logout" name="Submit" />
-					  </form>
-			  	</Col>
-			  </Row>
+
 		  </div>
   	)
   }

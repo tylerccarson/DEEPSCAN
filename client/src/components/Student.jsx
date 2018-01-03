@@ -7,7 +7,7 @@ import LoadingSpinner from './LoadingSpinner.jsx';
 import { setClassrooms, setSubmissions, setKey, setUserAnswers } from '../redux/actionCreators.js';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 
 class Student extends React.Component {
   constructor(props) {
@@ -83,7 +83,9 @@ class Student extends React.Component {
   render() {
 
   	const style = {
-  		form: {}
+  		button: {
+        margin: '5px'
+      }
   	}
 
     if (this.state.redirect && this.state.to === '') {
@@ -102,27 +104,36 @@ class Student extends React.Component {
       <div>
 
         <Row>
-          <Button onClick={this.getClassrooms}>
-            Submit an assignment
-          </Button>
+
+          <Col sm={12} md={6}>
+            <Button onClick={this.getClassrooms} style={style.button} >
+              Submit an assignment
+            </Button>
+            
+            <a href="./assets/multiplechoice45question.pdf" download>
+              <Button style={style.button} >Download an answer sheet</Button>
+            </a>
+
+            <Link to="/teacher">
+              <Button style={style.button} >Switch to teacher role</Button>
+            </Link>
+          </Col>
+
         </Row>
 
         <Row>
-          <a href="./assets/multiplechoice45question.pdf" download>
-            <Button>Download an answer sheet</Button>
-          </a>
-        </Row>
 
-        <Row>
-          User Submissions:
-          <ListGroup>
-          {this.props.submissions.map((submission, i) => {
+          <Col sm={12} md={6}>
+            <h3>User Submissions:</h3>
+            <ListGroup>
+            {this.props.submissions.map((submission, i) => {
 
-            let date = new Date(submission.updated).toLocaleString('en-US', { hour12: true });
+              let date = new Date(submission.updated).toLocaleString('en-US', { hour12: true });
 
-            return <ListGroupItem key={i} header={submission.classroom} onClick={() => this.goToTest(i)}>{submission.test} submitted {date}</ListGroupItem>
-          })}
-          </ListGroup>
+              return <ListGroupItem key={i} header={submission.classroom} onClick={() => this.goToTest(i)}>{submission.test} submitted {date}</ListGroupItem>
+            })}
+            </ListGroup>
+          </Col>
         </Row>
 
       </div>
