@@ -1,26 +1,120 @@
-/* Show it is fixed to the top */
+html,
 body {
-  min-height: 75rem;
-  padding-top: 4.5rem;
+  height: 100%;
+  /* The html and body elements cannot have any padding or margin. */
 }
 
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  /* Set the fixed height of the footer here */
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  /* Negative indent footer by it's height */
+  margin: 0 auto -60px;
+}
+
+/* Set the fixed height of the footer here */
+#push,
+#footer {
   height: 60px;
-  line-height: 60px; /* Vertically center the text there */
+}
+#footer {
   background-color: #f5f5f5;
+}
+
+p#footer-content {
   text-align: center;
+  line-height: 52px;
+}
+
+/* Lastly, apply responsive CSS fixes as necessary */
+@media (max-width: 767px) {
+  #footer {
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
 }
 
 .role-form {
   margin-left: auto;
   margin-right: auto;
-  width: 15em;
+  width: 30em;
+  border-radius: 6px;
+  background-color: white;
+  padding: 10px 25px;
+}
+
+.form-group {
+  margin-left: auto;
+  display: block;
+}
+
+.radio-btn-form {
+  text-align: center;
+}
+
+label.radio-inline {
+  font-size: 16px;
+  font-weight: 50;
+  margin: 5px 40px;
 }
 
 .jumbo-header {
   text-align: center;
+}
+
+h4.form-label {
+  text-align: center;
+}
+
+a.btn.btn-lg.btn-primary {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: 5.5em;
+}
+
+.select-classroom {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: 300px;
+  text-align: center;
+}
+
+.select-test {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: 300px;
+  text-align: center;
+}
+
+.select-file {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: 300px;
+  text-align: center;
+}
+
+button.btn.btn-default {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  margin-top: 10px;
+}
+
+input[type="file"] {
+  display: inline-block;
+}
+
+i.fa.fa-spinner.fa-spin {
+  font-size: 96px;
+  color: steelblue;
+  text-align: center;
+  display: block;
+  margin: 80px auto;
 }

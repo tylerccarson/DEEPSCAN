@@ -51,24 +51,27 @@ class SelectClassroom extends React.Component {
       )
     }
 
+    let title = this.props.classroom !== '' ? this.props.classroom : 'Which classroom?';
+
   	return (
-  		<Panel>
-	  		<form>
-	  		  <Row>
-			  		<DropdownButton title={'Which classroom?'} id={1}>
-			        {this.props.classrooms.map((classroom, i) => {
-			        	return <MenuItem name='classroom' eventKey={i} key={i} onSelect={this.handleSelection} >{classroom}</MenuItem>
-			        })}
-			      </DropdownButton>
-			      {' ' + this.props.classroom}
-		      </Row>
-		      <Row>
-		        <Button onClick={this.handleSubmit}>
-		          Next ->
-		        </Button>
-	        </Row>
-	      </form>
-      </Panel>
+      <div className="select-classroom">
+    		<Panel>
+  	  		<form>
+  	  		  <Row>
+  			  		<DropdownButton title={title} id={1}>
+  			        {this.props.classrooms.map((classroom, i) => {
+  			        	return <MenuItem name='classroom' eventKey={i} key={i} onSelect={this.handleSelection} >{classroom}</MenuItem>
+  			        })}
+  			      </DropdownButton>
+  		      </Row>
+  		      <Row>
+  		        <Button onClick={this.handleSubmit}>
+  		          Next ->
+  		        </Button>
+  	        </Row>
+  	      </form>
+        </Panel>
+      </div>
   	)
   }
 }

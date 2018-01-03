@@ -105,7 +105,10 @@ class Student extends React.Component {
 
         <Row>
 
-          <Col sm={12} md={6}>
+          <Col smHidden md={2}>
+          </Col>
+
+          <Col sm={12} md={8}>
             <Button onClick={this.getClassrooms} style={style.button} >
               Submit an assignment
             </Button>
@@ -115,11 +118,17 @@ class Student extends React.Component {
             </a>
           </Col>
 
+          <Col smHidden md={3}>
+          </Col>
+
         </Row>
 
         <Row>
 
-          <Col sm={12} md={6}>
+          <Col smHidden md={2}>
+          </Col>
+
+          <Col sm={12} md={8}>
             <h3>User Submissions:</h3>
             <ListGroup>
             {this.props.submissions.map((submission, i) => {
@@ -130,6 +139,10 @@ class Student extends React.Component {
             })}
             </ListGroup>
           </Col>
+
+          <Col smHidden md={2}>
+          </Col>
+
         </Row>
 
       </div>

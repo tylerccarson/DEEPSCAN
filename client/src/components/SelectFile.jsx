@@ -78,23 +78,27 @@ class SelectFile extends React.Component {
     }
 
   	return (
-  		<Panel>
-        <Row>
-          <form>
-            <FormControl
-              type="file"
-              onChange={this.handleImageChange}
-            />                    
-            <Button
-              className="submitButton"
-              type="submit"
-              onClick={this.handleSubmit}
-            >
-            Submit -->
-            </Button>
-          </form>
-        </Row>
-      </Panel>
+      <div className="select-file">
+
+    		<Panel>
+          <Row>
+            <form>
+              <FormControl
+                type="file"
+                onChange={this.handleImageChange}
+              />                    
+              <Button
+                className="submitButton"
+                type="submit"
+                onClick={this.handleSubmit}
+              >
+              Submit -->
+              </Button>
+            </form>
+          </Row>
+        </Panel>
+
+      </div>
   	)
   }
 }

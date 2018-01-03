@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Row, ListGroup, ListGroupItem, Radio, FormGroup, FieldGroup, ControlLabel, FormControl } from 'react-bootstrap';
+import { Button, Row, Col, ListGroup, ListGroupItem, Radio, FormGroup, FieldGroup, ControlLabel, FormControl } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { setNumOfQuestions, setQuestions, setTest, setClassroom } from '../redux/actionCreators.js';
@@ -65,48 +65,58 @@ class CreateTest extends React.Component {
     }
 
   	return (
-  		<div>
-        <form onSubmit={this.handleSubmit} >
-          <Row>
-          <FormGroup>
-            <ControlLabel>Test Name: </ControlLabel>
-            <FormControl
-              type="text"
-              value={this.props.test}
-              onChange={this.handleChangeTest}
-            />
-          </FormGroup>
-          </Row>
-          <Row>
-          <FormGroup>
-            <ControlLabel>Classroom Name: </ControlLabel>
-            <FormControl
-              type="text"
-              value={this.props.classroom}
-              onChange={this.handleChangeClassroom}
-            />
-          </FormGroup>
-          </Row>
-          <Row>
-          <FormGroup>
-            <ControlLabel>Number of Questions: </ControlLabel>
-            <FormControl
-              type="text"
-              value={this.props.numOfQuestions}
-              onChange={this.handleChangeNumOfQuestions}
-            />
-          </FormGroup>
-          </Row>
-  	  		<Row>
-  	  		  <Button
-  	          className="submitButton"
-  	          type="submit"
-  	        >
-  	        Generate Questions
-  	        </Button>
-  	  		</Row>	 
-        </form> 		
-  		</div>
+  		<Row>
+
+        <Col xs={2} sm={3} md={3}>
+        </Col>
+
+        <Col xs={8} sm={6} md={6}>
+          <form onSubmit={this.handleSubmit} >
+            <Row>
+            <FormGroup>
+              <ControlLabel>Test Name: </ControlLabel>
+              <FormControl
+                type="text"
+                value={this.props.test}
+                onChange={this.handleChangeTest}
+              />
+            </FormGroup>
+            </Row>
+            <Row>
+            <FormGroup>
+              <ControlLabel>Classroom Name: </ControlLabel>
+              <FormControl
+                type="text"
+                value={this.props.classroom}
+                onChange={this.handleChangeClassroom}
+              />
+            </FormGroup>
+            </Row>
+            <Row>
+            <FormGroup>
+              <ControlLabel>Number of Questions: </ControlLabel>
+              <FormControl
+                type="text"
+                value={this.props.numOfQuestions}
+                onChange={this.handleChangeNumOfQuestions}
+              />
+            </FormGroup>
+            </Row>
+    	  		<Row>
+    	  		  <Button
+    	          className="submitButton"
+    	          type="submit"
+    	        >
+    	        Generate Questions
+    	        </Button>
+    	  		</Row>	 
+          </form> 
+        </Col>
+
+        <Col xs={2} sm={3} md={3}>
+        </Col>
+
+  		</Row>
   	)
   }
 }

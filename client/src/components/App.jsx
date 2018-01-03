@@ -17,7 +17,7 @@ const App = () => {
             </Navbar.Header>
             <Nav>
               <NavItem eventKey={1} href="/">Home</NavItem>
-              <NavItem eventKey={2} href="/logout" >Log out</NavItem>
+              <NavItem eventKey={2} href="/logout" >Log Out</NavItem>
             </Nav>
           </Navbar>
           <Main />

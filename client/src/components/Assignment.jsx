@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, ListGroup, ListGroupItem, Button} from 'react-bootstrap';
+import { Row, Col, ListGroup, ListGroupItem, Button} from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -11,27 +11,35 @@ class Assignment extends React.Component {
 
   render() {
     return (
-      <div>
+      <Row>
 
-        <Row>
-          <Link to="/teacher">
-            <Button>Back to other assignments</Button>
-          </Link>
-        </Row>
+        <Col smHidden md={2}>
+        </Col>
 
-        <Row>
-          All Student Submissions for: {this.props.classroom} {this.props.test}
-          <ListGroup>
-          {this.props.submissions.map((submission, i) => {
+        <Col sm={12} md={8}>
+          <Row>
+            <Link to="/teacher">
+              <Button>Back to other assignments</Button>
+            </Link>
+          </Row>
+  
+          <Row>
+            <h3>All Student Submissions for: {this.props.test} in {this.props.classroom}</h3>
+            <ListGroup>
+            {this.props.submissions.map((submission, i) => {
 
-            let date = new Date(submission.updated).toLocaleString('en-US', { hour12: true });
+              let date = new Date(submission.updated).toLocaleString('en-US', { hour12: true });
 
-            return <ListGroupItem key={i}>{submission.user.username} submitted: {date}</ListGroupItem>
-          })}
-          </ListGroup>
-        </Row>
+              return <ListGroupItem key={i}>{submission.user.username} submitted: {date}</ListGroupItem>
+            })}
+            </ListGroup>
+          </Row>
+        </Col>
 
-      </div>
+        <Col smHidden md={2}>
+        </Col>
+
+      </Row>
     )
   }
 }

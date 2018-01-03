@@ -1,5 +1,5 @@
 import React from 'react';
-import { ListGroup, ListGroupItem, Row, Button } from 'react-bootstrap';
+import { ListGroup, ListGroupItem, Row, Col, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
@@ -12,12 +12,6 @@ class Results extends React.Component {
 
   render() {
 
-    const style = {
-      list: {
-        //width: '50%'
-      }
-    };
-
     const keyMap = {
       '0': 'A',
       '1': 'B',
@@ -27,43 +21,53 @@ class Results extends React.Component {
     };
     
     return (
-      <div>
+      <Row>
 
-        <Row>
-          <Link to="/student">
-            <Button>Back to other submissions</Button>
-          </Link>
-        </Row>
+        <Col smHidden md={2}>
+        </Col>
 
-        <Row style={style.list}>
-          <ListGroup>
+        <Col sm={12} md={8}>
 
-            {this.props.answerKey.map((question, i) => {
+          <Row>
+            <Link to="/student">
+              <Button>Back to other submissions</Button>
+            </Link>
+          </Row>
 
-              let header;
-              let entry = i < this.props.userAnswers.length ? this.props.userAnswers[i] : undefined;
+          <Row>
+            <ListGroup>
 
-              if(entry === undefined) {
-                header = `${i + 1}) Missing user input.`;
-              
-              } else if (keyMap[entry[1]] === 'invalid') {
-                header = entry[0] + ') Invalid input or deepscan error.';
+              {this.props.answerKey.map((question, i) => {
 
-              } else if (keyMap[entry[1]] === this.props.answerKey[i].letter) {
-                header = entry[0] + ') ' + keyMap[entry[1]] + ' is correct.';
+                let header;
+                let entry = i < this.props.userAnswers.length ? this.props.userAnswers[i] : undefined;
 
-              } else {
-                header = entry[0] + ') ' + keyMap[entry[1]] + ' is incorrect. The correct answer is ' + this.props.answerKey[i].letter + '.';
-              }
+                if(entry === undefined) {
+                  header = `${i + 1}) Missing user input.`;
+                
+                } else if (keyMap[entry[1]] === 'invalid') {
+                  header = entry[0] + ') Invalid input or deepscan error.';
 
-              return <ListGroupItem key={i} header={header} >{question.comments}</ListGroupItem>
+                } else if (keyMap[entry[1]] === this.props.answerKey[i].letter) {
+                  header = entry[0] + ') ' + keyMap[entry[1]] + ' is correct.';
 
-            })}
+                } else {
+                  header = entry[0] + ') ' + keyMap[entry[1]] + ' is incorrect. The correct answer is ' + this.props.answerKey[i].letter + '.';
+                }
 
-          </ListGroup>
-        </Row>
+                return <ListGroupItem key={i} header={header} >{question.comments}</ListGroupItem>
 
-      </div>
+              })}
+
+            </ListGroup>
+          </Row>
+
+        </Col>
+
+        <Col smHidden md={2}>
+        </Col>
+
+      </Row>
     )
   }
 

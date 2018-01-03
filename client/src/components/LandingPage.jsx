@@ -1,6 +1,7 @@
 import React from 'react';
 import { FormGroup, Radio, Button, Well } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
+import LoadingSpinner from './LoadingSpinner.jsx';
 
 class LandingPage extends React.Component {
   constructor(props) {
@@ -37,6 +38,7 @@ class LandingPage extends React.Component {
   	return (
 
       <div className="container">
+
         <div className="jumbotron">
 
           <div className="jumbo-header">
@@ -46,14 +48,15 @@ class LandingPage extends React.Component {
 
           <form className="role-form">
               <FormGroup>
-                <h4>Choose one:</h4>
-                <Radio name="radioGroup" value="student" inline defaultChecked onChange={this.handleChange}>
-                  Student
-                </Radio>
-                {' '}
-                <Radio name="radioGroup" value="teacher" inline onChange={this.handleChange}>
-                  Teacher
-                </Radio>
+                <h4 className="form-label">Choose one:</h4>
+                <div className="radio-btn-form">
+                  <Radio name="radioGroup" value="student" inline defaultChecked onChange={this.handleChange}>
+                    Student
+                  </Radio>
+                  <Radio name="radioGroup" value="teacher" inline onChange={this.handleChange}>
+                    Teacher
+                  </Radio>
+                </div>
               </FormGroup>
               <a className="btn btn-lg btn-primary" type="submit" onClick={this.submitRole}>
                 Submit

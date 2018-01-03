@@ -52,24 +52,27 @@ class SelectTest extends React.Component {
       )
     }
 
+    let title = this.props.test !== '' ? this.props.classroom : 'Which test?';
+
   	return (
-  		<Panel>
-	  		<form>
-	  		  <Row>
-			  		<DropdownButton title={'Which test?'} id={2}>
-			        {this.props.tests.map((test, i) => {
-			        	return <MenuItem name='test' eventKey={i} key={i} onSelect={this.handleSelection} >{test}</MenuItem>
-			        })}
-			      </DropdownButton>
-			      {' ' + this.props.test}
-		      </Row>
-		      <Row>
-		        <Button onClick={this.handleSubmit}>
-		          Next ->
-		        </Button>
-	        </Row>
-	      </form>
-      </Panel>
+      <div className="select-test">
+    		<Panel>
+  	  		<form>
+  	  		  <Row>
+  			  		<DropdownButton title={title} id={2}>
+  			        {this.props.tests.map((test, i) => {
+  			        	return <MenuItem name='test' eventKey={i} key={i} onSelect={this.handleSelection} >{test}</MenuItem>
+  			        })}
+  			      </DropdownButton>
+  		      </Row>
+  		      <Row>
+  		        <Button onClick={this.handleSubmit}>
+  		          Next ->
+  		        </Button>
+  	        </Row>
+  	      </form>
+        </Panel>
+      </div>
   	)
   }
 }

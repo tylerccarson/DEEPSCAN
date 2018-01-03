@@ -78,23 +78,35 @@ class Teacher extends React.Component {
 
         <Row>
 
-          <Col sm={12} md={6}>
+          <Col smHidden md={2}>
+          </Col>
+
+          <Col sm={12} md={8}>
             <Link to="/createTest">
               <Button style={style.button}>Create a new assignment</Button>
             </Link>
+          </Col>
+
+          <Col smHidden md={2}>
           </Col>
 
         </Row>
 
         <Row>
 
-          <Col sm={12} md={6}>
+          <Col smHidden md={2}>
+          </Col>
+
+          <Col sm={12} md={8}>
             <h3>Teacher Assignments:</h3>
             <ListGroup>
             {this.props.assignments.map((assignment, i) => {
               return <ListGroupItem key={i} header={assignment.classroom} onClick={() => this.goToAssignment(i)}>{assignment.test}</ListGroupItem>
             })}
             </ListGroup>
+          </Col>
+
+          <Col smHidden md={2}>
           </Col>
 
         </Row>
