@@ -11,8 +11,8 @@ const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
-const RedisStore = require('connect-redis')(session);
-const redisClient = require('redis').createClient();
+// const RedisStore = require('connect-redis')(session);
+// const redisClient = require('redis').createClient();
 
 passport.use('local-login', new Strategy(
 	function(username, password, callback) {
