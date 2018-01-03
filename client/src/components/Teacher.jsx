@@ -82,10 +82,6 @@ class Teacher extends React.Component {
             <Link to="/createTest">
               <Button style={style.button}>Create a new assignment</Button>
             </Link>
-
-            <Link to="/student">
-              <Button style={style.button}>Switch to student role</Button>
-            </Link>
           </Col>
 
         </Row>

@@ -113,10 +113,6 @@ class Student extends React.Component {
             <a href="./assets/multiplechoice45question.pdf" download>
               <Button style={style.button} >Download an answer sheet</Button>
             </a>
-
-            <Link to="/teacher">
-              <Button style={style.button} >Switch to teacher role</Button>
-            </Link>
           </Col>
 
         </Row>

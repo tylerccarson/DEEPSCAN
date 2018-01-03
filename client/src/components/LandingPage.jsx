@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, FormGroup, Radio, Button } from 'react-bootstrap';
+import { FormGroup, Radio, Button, Well } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 
 class LandingPage extends React.Component {
@@ -35,22 +35,32 @@ class LandingPage extends React.Component {
   	}
 
   	return (
-  		<div>
-  		  Choose one:
-  		  <Form>
-  		    <FormGroup>
-			      <Radio name="radioGroup" value="student" inline defaultChecked onChange={this.handleChange}>
-			        Student
-			      </Radio>
-			      {' '}
-			      <Radio name="radioGroup" value="teacher" inline onChange={this.handleChange}>
-			        Teacher
-			      </Radio>
-			    </FormGroup>
-			    <Button type="submit" onClick={this.submitRole}>
-			      Submit
-			    </Button>
-  		  </Form>
+
+      <div className="container">
+        <div className="jumbotron">
+
+          <div className="jumbo-header">
+            <h1>Welcome to Deepscan</h1>
+            <p className="lead">Make testing free with this futuristic Scantron Web App</p>
+          </div>
+
+          <form className="role-form">
+              <FormGroup>
+                <h4>Choose one:</h4>
+                <Radio name="radioGroup" value="student" inline defaultChecked onChange={this.handleChange}>
+                  Student
+                </Radio>
+                {' '}
+                <Radio name="radioGroup" value="teacher" inline onChange={this.handleChange}>
+                  Teacher
+                </Radio>
+              </FormGroup>
+              <a className="btn btn-lg btn-primary" type="submit" onClick={this.submitRole}>
+                Submit
+              </a>
+          </form>
+
+        </div>
   		</div>
   	)
   }
