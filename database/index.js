@@ -19,6 +19,7 @@ db.once('open', function callback() {
 const userSchema = new mongoose.Schema({
 	username: String,
   password: String
+  //possibly add first, last, and email for future use
 });
 
 const examSchema = new mongoose.Schema({
@@ -27,8 +28,9 @@ const examSchema = new mongoose.Schema({
   answers: Array,
   //for future use:
   due: Date,
+  createdAt: Date,
   //
-  user: String, //corresponds to User._id
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   type: String //'teacher', or 'student' 
 });
 

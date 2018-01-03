@@ -14,7 +14,7 @@ class Assignment extends React.Component {
         All Student Submissions for: {this.props.classroom} {this.props.test}
         <ListGroup>
         {this.props.submissions.map((submission, i) => {
-          return <ListGroupItem key={i}>{submission.user}</ListGroupItem>
+          return <ListGroupItem key={i}>{submission.user.username}</ListGroupItem>
         })}
         </ListGroup>
       </Row>

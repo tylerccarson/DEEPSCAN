@@ -231,7 +231,7 @@ router.post('/api/upload', verify, (req, res) => {
 
 		let classroom = fields.Classroom;
 		let test = fields.Test;
-		let student = req.session.passport.user;
+		let student_id = req.session.passport.user;
 		let file = files.File;
 
 		fs.rename(file.path, path.join(form.uploadDir, 'input.jpg'), (err) => {
@@ -256,14 +256,11 @@ router.post('/api/upload', verify, (req, res) => {
 	    		test: test,
 	    		classroom: classroom,
 	    		answers: results[0],
-	    		user: student,
+	    		user: student_id,
 	    		type: 'student'
 
 	    	}, (err, exam) => {
-	    		if (err) {
-	    			res.send(err);
-	    		}
-    
+	    		if (err) throw err;
           res.send(exam);
 
 	    	});
@@ -272,7 +269,7 @@ router.post('/api/upload', verify, (req, res) => {
 
     });
 
-    if (err) res.send(err);
+    if (err) throw err;
 
 	});
 
@@ -324,20 +321,22 @@ router.get('/teacher/assignments', verify, (req, res) => {
 
 router.get('/assignment/submissions', verify, (req, res) => {
 
+	db.Exam
+		.find({
+			test: req.query.test,
+			classroom: req.query.classroom,
+			type: 'student'
 
-	db.Exam.find({
-		test: req.query.test,
-		classroom: req.query.classroom,
-		type: 'student'
+		})
+		.populate('user')
+		.exec((err, docs) => {
+			if (err) {
+				res.error(err);
+			}
 
-	}, (err, docs) => {
-		if (err) {
-			res.error(err);
-		}
+			res.send(docs);
 
-		res.send(docs);
-
-	});
+		});
 })
 
 router.get('/*', verify, (req, res) => {
